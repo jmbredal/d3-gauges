@@ -14,9 +14,13 @@ class RoundGauge {
         }
 
         // Create the various elements
-        this.svg = d3.select(elementId).append('svg').attr('viewBox', '0 0 200 200').attr('font-family', 'sans-serif');
+        this.svg = d3.select(elementId).append('svg')
+            .attr('viewBox', '0 0 200 200')
+            .attr('font-family', 'sans-serif');
         this.outline = createOutline(this.svg, this.defaults);
-        this.scale = d3.scaleLinear().range([-120, 120]).domain([this.defaults.minValue, this.defaults.maxValue]);
+        this.scale = d3.scaleLinear()
+            .range([-120, 120])
+            .domain([this.defaults.minValue, this.defaults.maxValue]);
         createRadialAxis(this.svg, this.defaults);
         this.hand = createHand(this.svg, this.defaults, this.scale);
         this.text = createText(this.svg, this.defaults);
@@ -24,12 +28,17 @@ class RoundGauge {
 
     // Animate the gauge with new value
     update(v) {
-        this.hand.transition().duration(this.defaults.transitionDuration).attrTween('transform', rotateTween(this.scale(v)));
-        this.text.transition().duration(this.defaults.transitionDuration).textTween(customTextTween(v));
+        this.hand.transition()
+            .duration(this.defaults.transitionDuration)
+            .attrTween('transform', rotateTween(this.scale(v)));
+        this.text.transition()
+            .duration(this.defaults.transitionDuration)
+            .textTween(customTextTween(v));
     }
 
     getRandomValue() {
-        return parseInt((Math.random() * (this.defaults.maxValue - this.defaults.minValue)) + this.defaults.minValue);
+        const diff = this.defaults.maxValue - this.defaults.minValue;
+        return parseInt((Math.random() * diff) + this.defaults.minValue);
     }
 
     demo() {
@@ -83,8 +92,12 @@ function createRadialAxis(svg, defaults) {
             return
         });
 
-    svg.append('g').attr('transform', `translate(${defaults.centerX}, ${defaults.centerY})`).call(myRadialAxis);
-    svg.append('g').attr('transform', `translate(${defaults.centerX}, ${defaults.centerY})`).call(mySecondRadialAxis);
+    svg.append('g')
+        .attr('transform', `translate(${defaults.centerX}, ${defaults.centerY})`)
+        .call(myRadialAxis);
+    svg.append('g')
+        .attr('transform', `translate(${defaults.centerX}, ${defaults.centerY})`)
+        .call(mySecondRadialAxis);
 }
 
 function createHand(svg, defaults, scale) {
