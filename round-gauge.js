@@ -32,7 +32,7 @@ class RoundGauge {
             .attr('fill', 'gainsboro');
         this.hand = createBigHand(this.svg, this.defaults, this.scale);
         createCenterButton(this.svg, this.defaults);
-        this.text = createText(this.svg, this.defaults);
+        this.valueText = createValueText(this.svg, this.defaults);
     }
 
     // Animate the gauge with new value
@@ -40,7 +40,7 @@ class RoundGauge {
         this.hand.transition()
             .duration(this.defaults.transitionDuration)
             .attrTween('transform', rotateTween(this.scale(v)));
-        this.text.transition()
+        this.valueText.transition()
             .duration(this.defaults.transitionDuration)
             .textTween(customTextTween(v));
     }
@@ -149,7 +149,7 @@ function createOutline(svg, defaults) {
         .attr('fill', 'white');
 }
 
-function createText(svg, defaults) {
+function createValueText(svg, defaults) {
     return svg.append('text')
         .datum({ value: defaults.startValue })
         .attr('x', defaults.centerX)
