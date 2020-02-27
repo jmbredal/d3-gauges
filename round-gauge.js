@@ -8,6 +8,8 @@ class RoundGauge {
             startValue: startValue,
             valueSpacing: valueSpacing,
             tickStep: tickStep,
+            unit: '',
+            scaleType: '',
             startAngle: -(Math.PI * 2 * (120 / 360)),
             endAngle: Math.PI * 2 * (120 / 360),
             transitionDuration: 1500,
@@ -22,16 +24,9 @@ class RoundGauge {
             .range([-120, 120])
             .domain([this.defaults.minValue, this.defaults.maxValue]);
         createRadialAxis(this.svg, this.defaults);
-        this.svg.append('rect')
-            .attr('x', 70)
-            .attr('y', 150)
-            .attr('width', 60)
-            .attr('height', 25)
-            .attr('rx', 3)
-            .attr('stroke', 'grey')
-            .attr('fill', 'gainsboro');
         this.hand = createBigHand(this.svg, this.defaults, this.scale);
         createCenterButton(this.svg, this.defaults);
+        createTexts(this.svg, this.defaults, this.scale);
         this.valueText = createValueText(this.svg, this.defaults);
     }
 
@@ -173,4 +168,24 @@ function coldMarker() {
     })
         .attr('transform', 'translate(100, 100)')
         .attr('fill', 'blue');
+}
+
+function createTexts(svg, defaults, scale) {
+    // Background for valuetext
+    svg.append('rect')
+        .attr('x', 65)
+        .attr('y', 150)
+        .attr('width', 70)
+        .attr('height', 25)
+        .attr('rx', 3)
+        .attr('stroke', 'grey')
+        .attr('fill', 'gainsboro');
+
+    // Type of scale (e.g. temperature, pressure)
+    svg.append('text')
+        .attr('x', 100)
+        .attr('y', 143)
+        .attr('font-size', 12)
+        .attr('text-anchor', 'middle')
+        .text(defaults.scaleType);
 }
