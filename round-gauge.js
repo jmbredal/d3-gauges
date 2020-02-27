@@ -22,7 +22,16 @@ class RoundGauge {
             .range([-120, 120])
             .domain([this.defaults.minValue, this.defaults.maxValue]);
         createRadialAxis(this.svg, this.defaults);
-        this.hand = createHand(this.svg, this.defaults, this.scale);
+        this.svg.append('rect')
+            .attr('x', 70)
+            .attr('y', 150)
+            .attr('width', 60)
+            .attr('height', 25)
+            .attr('rx', 3)
+            .attr('stroke', 'grey')
+            .attr('fill', 'gainsboro');
+        this.hand = createBigHand(this.svg, this.defaults, this.scale);
+        createCenterButton(this.svg, this.defaults);
         this.text = createText(this.svg, this.defaults);
     }
 
@@ -41,11 +50,13 @@ class RoundGauge {
         return parseInt((Math.random() * diff) + this.defaults.minValue);
     }
 
-    demo() {
+    test() {
         this.update(this.getRandomValue());
-        setInterval(() => {
-            this.update(this.getRandomValue());
-        }, 2500);
+    }
+
+    demo() {
+        this.test();
+        setInterval(this.test.bind(this), 2500);
     }
 }
 
@@ -101,7 +112,7 @@ function createRadialAxis(svg, defaults) {
 }
 
 function createHand(svg, defaults, scale) {
-    const hand = svg.append('line')
+    return hand = svg.append('line')
         .datum({ angle: scale(defaults.startValue) })
         .attr('x1', defaults.centerX)
         .attr('y1', defaults.centerY)
@@ -109,14 +120,23 @@ function createHand(svg, defaults, scale) {
         .attr('y2', 10)
         .attr('stroke', 'red')
         .attr('transform', `rotate(${scale(defaults.startValue)}, ${defaults.centerX}, ${defaults.centerY})`);
+}
 
+function createBigHand(svg, defaults, scale) {
+    return svg.append('polygon')
+        .datum({ angle: scale(defaults.startValue) })
+        .attr('points', '96,120 104,120 100,10')
+        .attr('stroke', 'black')
+        .attr('fill', 'red')
+        .attr('transform', `rotate(${scale(defaults.startValue)}, ${defaults.centerX}, ${defaults.centerY})`);
+}
+
+function createCenterButton(svg, defaults) {
     // Add a little button for prettyness
     svg.append('circle')
         .attr('cx', defaults.centerX)
         .attr('cy', defaults.centerY)
-        .attr('r', 3);
-
-    return hand;
+        .attr('r', 5);
 }
 
 function createOutline(svg, defaults) {
@@ -124,7 +144,8 @@ function createOutline(svg, defaults) {
         .attr('cx', defaults.centerX)
         .attr('cy', defaults.centerY)
         .attr('r', 95)
-        .attr('stroke', 'black')
+        .attr('stroke', 'rgba(0, 0, 0, .6)')
+        .attr('stroke-width', 3)
         .attr('fill', 'white');
 }
 
@@ -141,7 +162,7 @@ function createText(svg, defaults) {
 function coldMarker() {
     const start = this.scale(-30);
     const end = this.scale(0);
-    this.svg.append('path').attr('d', function(){
+    this.svg.append('path').attr('d', function () {
         const arc = d3.arc();
         return arc({
             innerRadius: 25,
@@ -150,6 +171,6 @@ function coldMarker() {
             endAngle: 2 * Math.PI * (end / 360)
         });
     })
-    .attr('transform', 'translate(100, 100)')
-    .attr('fill', 'blue');
+        .attr('transform', 'translate(100, 100)')
+        .attr('fill', 'blue');
 }

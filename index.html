@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,14 +9,20 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="d3-radial-axis.min.js"></script>
 </head>
+
 <body>
-    <div id="temperature" style="border: 1px solid black; width: 200px"></div>
-    <div id="pressure" style="border: 1px solid black; width: 200px"></div>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <div id="temperature" style="width: 200px"></div>
+        <div id="pressure" style="width: 300px"></div>
+    </div>
 
     <script src="round-gauge.js"></script>
     <script>
-        new RoundGauge('#temperature', minValue=-30, maxValue=70, startValue=0, valueSpacing=10, tickStep=2);
-        new RoundGauge('#pressure');
+        const temp = new RoundGauge('#temperature', minValue = -30, maxValue = 70, startValue = 0, valueSpacing = 10, tickStep = 2);
+        temp.demo();
+        const pressure = new RoundGauge('#pressure');
+        // pressure.demo();
     </script>
 </body>
+
 </html>
