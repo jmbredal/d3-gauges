@@ -1,28 +1,34 @@
 class RoundGauge {
+    defaultConfig = {
+        minValue: 900,
+        maxValue: 1100,
+        startValue: 1000,
+        valueSpacing: 20,
+        tickStep: 5,
+        unit: '',
+        scaleType: '',
+        centerX: 100,
+        centerY: 100,
+        startAngle: -(Math.PI * 2 * (120 / 360)),
+        endAngle: Math.PI * 2 * (120 / 360),
+        transitionDuration: 1500,
+    }
+
     constructor(elementId, config={}) {
-        const defaults = {
-            minValue: 900,
-            maxValue: 1100,
-            startValue: 1000,
-            valueSpacing: 20,
-            tickStep: 5,
-            unit: '',
-            scaleType: '',
-            secondaryHand: false,
-        }
-
-        const userConfig = {...defaults, ...config};
-
         this.config = {
-            ...userConfig,
-            centerX: 100,
-            centerY: 100,
-            startAngle: -(Math.PI * 2 * (120 / 360)),
-            endAngle: Math.PI * 2 * (120 / 360),
-            transitionDuration: 1500,
-        }
+            ...this.defaultConfig,
+            ...this.getDefaultConfig(),
+            ...config};
 
-        // Create the various elements
+        this.createBaseLayout(elementId);
+        this.createDefaultLayout();
+    }
+
+    getDefaultConfig() {
+        return this.defaultConfig;
+    }
+
+    createBaseLayout() {
         this.svg = d3.select(elementId).append('svg')
             .attr('viewBox', '0 0 200 200')
             .attr('font-family', 'sans-serif');
@@ -31,9 +37,10 @@ class RoundGauge {
             .range([-120, 120])
             .domain([this.config.minValue, this.config.maxValue]);
         createRadialAxis(this.svg, this.config);
-        if (this.config.secondaryHand) {
-            this.hand2 = createHand(this.svg, this.config, this.scale);
-        }
+    }
+
+    // Create basic layout with a hand and numbers
+    createBasicLayout() {
         this.hand = createBigHand(this.svg, this.config, this.scale);
         createCenterButton(this.svg, this.config);
         this.valueText = createValueTexts(this.svg, this.config, this.scale);
@@ -49,12 +56,6 @@ class RoundGauge {
             .textTween(customTextTween(v));
     }
 
-    updateSecondary(v) {
-        this.hand2.transition()
-            .duration(this.config.transitionDuration)
-            .attrTween('transform', rotateTween(this.scale(v)));
-    }
-
     getRandomValue() {
         const diff = this.config.maxValue - this.config.minValue;
         return parseInt((Math.random() * diff) + this.config.minValue);
@@ -62,14 +63,34 @@ class RoundGauge {
 
     test() {
         this.update(this.getRandomValue());
-        if (this.config.secondaryHand) {
-            this.updateSecondary(this.getRandomValue());
-        }
     }
 
     demo() {
         this.test();
         setInterval(this.test.bind(this), 2500);
+    }
+}
+
+class TemperatureRoundGauge extends RoundGauge {
+    getDefaultConfig() {
+        return {
+            minValue: -30,
+            maxValue: 50,
+            startValue: 0,
+            valueSpacing: 10,
+            tickStep: 2,
+            unit: '°C',
+            scaleType: 'Temperature',
+        };
+    }
+}
+
+class PressureRoundGauge extends RoundGauge {
+    getDefaultConfig() {
+        return {
+            unit: 'hPa',
+            scaleType: 'Pressure',
+        }
     }
 }
 
