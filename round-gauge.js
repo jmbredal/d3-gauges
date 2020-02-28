@@ -8,20 +8,15 @@ class RoundGauge {
             tickStep: 5,
             unit: '',
             scaleType: '',
+            secondaryHand: false,
         }
 
-        const _config = {...defaults, ...config};
+        const userConfig = {...defaults, ...config};
 
         this.config = {
+            ...userConfig,
             centerX: 100,
             centerY: 100,
-            minValue: _config.minValue,
-            maxValue: _config.maxValue,
-            startValue: _config.startValue,
-            valueSpacing: _config.valueSpacing,
-            tickStep: _config.tickStep,
-            unit: _config.unit,
-            scaleType: _config.scaleType,
             startAngle: -(Math.PI * 2 * (120 / 360)),
             endAngle: Math.PI * 2 * (120 / 360),
             transitionDuration: 1500,
@@ -36,6 +31,9 @@ class RoundGauge {
             .range([-120, 120])
             .domain([this.config.minValue, this.config.maxValue]);
         createRadialAxis(this.svg, this.config);
+        if (this.config.secondaryHand) {
+            this.hand2 = createHand(this.svg, this.config, this.scale);
+        }
         this.hand = createBigHand(this.svg, this.config, this.scale);
         createCenterButton(this.svg, this.config);
         this.valueText = createValueTexts(this.svg, this.config, this.scale);
@@ -51,6 +49,12 @@ class RoundGauge {
             .textTween(customTextTween(v));
     }
 
+    updateSecondary(v) {
+        this.hand2.transition()
+            .duration(this.config.transitionDuration)
+            .attrTween('transform', rotateTween(this.scale(v)));
+    }
+
     getRandomValue() {
         const diff = this.config.maxValue - this.config.minValue;
         return parseInt((Math.random() * diff) + this.config.minValue);
@@ -58,6 +62,9 @@ class RoundGauge {
 
     test() {
         this.update(this.getRandomValue());
+        if (this.config.secondaryHand) {
+            this.updateSecondary(this.getRandomValue());
+        }
     }
 
     demo() {
@@ -127,7 +134,7 @@ function createHand(svg, config, scale) {
         .attr('y1', config.centerY)
         .attr('x2', 100)
         .attr('y2', 10)
-        .attr('stroke', 'red')
+        .attr('stroke', 'black')
         .attr('transform', `rotate(${scale(config.startValue)}, ${config.centerX}, ${config.centerY})`);
 }
 
