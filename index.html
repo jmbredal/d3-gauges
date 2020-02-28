@@ -18,9 +18,18 @@
 
     <script src="round-gauge.js"></script>
     <script>
-        const temp = new RoundGauge('#temperature', minValue = -30, maxValue = 70, startValue = 0, valueSpacing = 10, tickStep = 2);
+        const tempConfig = {
+            minValue: -30, maxValue: 50, startValue: 0, valueSpacing: 10, tickStep: 2,
+            scaleType: 'Temperature', unit: '°C'
+        }
+        const temp = new RoundGauge('#temperature', tempConfig);
         temp.demo();
-        const pressure = new RoundGauge('#pressure');
+
+        const pressureConfig = {
+            minValue: 900, maxValue: 1100, startValue: 1000, valueSpacing: 20, tickStep: 5,
+            scaleType: 'Pressure', unit: 'hPa'
+        }
+        const pressure = new RoundGauge('#pressure', pressureConfig);
         // pressure.demo();
     </script>
 </body>

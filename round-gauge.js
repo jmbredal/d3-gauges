@@ -1,15 +1,15 @@
 class RoundGauge {
-    constructor(elementId, minValue = 900, maxValue = 1100, startValue = 1000, valueSpacing = 20, tickStep = 5) {
-        this.defaults = {
+    constructor(elementId, config={}) {
+        this.config = {
             centerX: 100,
             centerY: 100,
-            minValue: minValue,
-            maxValue: maxValue,
-            startValue: startValue,
-            valueSpacing: valueSpacing,
-            tickStep: tickStep,
-            unit: '',
-            scaleType: '',
+            minValue: typeof config.minValue != 'undefined' ? config.minValue : 900,
+            maxValue: typeof config.maxValue != 'undefined' ? config.maxValue : 1100,
+            startValue: typeof config.startValue != 'undefined' ? config.startValue : 1000,
+            valueSpacing: typeof config.valueSpacing != 'undefined' ? config.valueSpacing : 20,
+            tickStep: config.tickStep || 5,
+            unit: config.unit || '',
+            scaleType: config.scaleType || '',
             startAngle: -(Math.PI * 2 * (120 / 360)),
             endAngle: Math.PI * 2 * (120 / 360),
             transitionDuration: 1500,
@@ -19,30 +19,29 @@ class RoundGauge {
         this.svg = d3.select(elementId).append('svg')
             .attr('viewBox', '0 0 200 200')
             .attr('font-family', 'sans-serif');
-        this.outline = createOutline(this.svg, this.defaults);
+        this.outline = createOutline(this.svg, this.config);
         this.scale = d3.scaleLinear()
             .range([-120, 120])
-            .domain([this.defaults.minValue, this.defaults.maxValue]);
-        createRadialAxis(this.svg, this.defaults);
-        this.hand = createBigHand(this.svg, this.defaults, this.scale);
-        createCenterButton(this.svg, this.defaults);
-        createTexts(this.svg, this.defaults, this.scale);
-        this.valueText = createValueText(this.svg, this.defaults);
+            .domain([this.config.minValue, this.config.maxValue]);
+        createRadialAxis(this.svg, this.config);
+        this.hand = createBigHand(this.svg, this.config, this.scale);
+        createCenterButton(this.svg, this.config);
+        this.valueText = createValueTexts(this.svg, this.config, this.scale);
     }
 
     // Animate the gauge with new value
     update(v) {
         this.hand.transition()
-            .duration(this.defaults.transitionDuration)
+            .duration(this.config.transitionDuration)
             .attrTween('transform', rotateTween(this.scale(v)));
         this.valueText.transition()
-            .duration(this.defaults.transitionDuration)
+            .duration(this.config.transitionDuration)
             .textTween(customTextTween(v));
     }
 
     getRandomValue() {
-        const diff = this.defaults.maxValue - this.defaults.minValue;
-        return parseInt((Math.random() * diff) + this.defaults.minValue);
+        const diff = this.config.maxValue - this.config.minValue;
+        return parseInt((Math.random() * diff) + this.config.minValue);
     }
 
     test() {
@@ -73,24 +72,24 @@ function rotateTween(v) {
     }
 }
 
-function createRadialAxis(svg, defaults) {
+function createRadialAxis(svg, config) {
     const myAngleScale = d3.scaleLinear()
-        .domain([defaults.minValue, defaults.maxValue])
-        .range([defaults.startAngle, defaults.endAngle]);
+        .domain([config.minValue, config.maxValue])
+        .range([config.startAngle, config.endAngle]);
     const myRadius = 85;
     const myRadialAxis = d3.axisRadialInner(myAngleScale, myRadius)
         .tickPadding(18)
         // .ticks(40)
-        .tickValues(d3.range(defaults.minValue, defaults.maxValue + defaults.tickStep, defaults.tickStep))
+        .tickValues(d3.range(config.minValue, config.maxValue + config.tickStep, config.tickStep))
         .tickFormat((x) => {
             // Display only certain tick values
-            if (x % defaults.valueSpacing == 0) {
+            if (x % config.valueSpacing == 0) {
                 return x;
             }
         })
 
     // Create a second radial axis for displaying the larger ticks
-    const tickValues = d3.range(defaults.minValue, defaults.maxValue, defaults.valueSpacing);
+    const tickValues = d3.range(config.minValue, config.maxValue, config.valueSpacing);
     const mySecondRadialAxis = d3.axisRadialInner(myAngleScale, myRadius)
         .tickSize(12)
         .tickValues(tickValues)
@@ -99,59 +98,59 @@ function createRadialAxis(svg, defaults) {
         });
 
     svg.append('g')
-        .attr('transform', `translate(${defaults.centerX}, ${defaults.centerY})`)
+        .attr('transform', `translate(${config.centerX}, ${config.centerY})`)
         .call(myRadialAxis);
     svg.append('g')
-        .attr('transform', `translate(${defaults.centerX}, ${defaults.centerY})`)
+        .attr('transform', `translate(${config.centerX}, ${config.centerY})`)
         .call(mySecondRadialAxis);
 }
 
-function createHand(svg, defaults, scale) {
+function createHand(svg, config, scale) {
     return hand = svg.append('line')
-        .datum({ angle: scale(defaults.startValue) })
-        .attr('x1', defaults.centerX)
-        .attr('y1', defaults.centerY)
+        .datum({ angle: scale(config.startValue) })
+        .attr('x1', config.centerX)
+        .attr('y1', config.centerY)
         .attr('x2', 100)
         .attr('y2', 10)
         .attr('stroke', 'red')
-        .attr('transform', `rotate(${scale(defaults.startValue)}, ${defaults.centerX}, ${defaults.centerY})`);
+        .attr('transform', `rotate(${scale(config.startValue)}, ${config.centerX}, ${config.centerY})`);
 }
 
-function createBigHand(svg, defaults, scale) {
+function createBigHand(svg, config, scale) {
     return svg.append('polygon')
-        .datum({ angle: scale(defaults.startValue) })
+        .datum({ angle: scale(config.startValue) })
         .attr('points', '96,120 104,120 100,10')
         .attr('stroke', 'black')
         .attr('fill', 'red')
-        .attr('transform', `rotate(${scale(defaults.startValue)}, ${defaults.centerX}, ${defaults.centerY})`);
+        .attr('transform', `rotate(${scale(config.startValue)}, ${config.centerX}, ${config.centerY})`);
 }
 
-function createCenterButton(svg, defaults) {
+function createCenterButton(svg, config) {
     // Add a little button for prettyness
     svg.append('circle')
-        .attr('cx', defaults.centerX)
-        .attr('cy', defaults.centerY)
+        .attr('cx', config.centerX)
+        .attr('cy', config.centerY)
         .attr('r', 5);
 }
 
-function createOutline(svg, defaults) {
+function createOutline(svg, config) {
     return svg.append('circle')
-        .attr('cx', defaults.centerX)
-        .attr('cy', defaults.centerY)
+        .attr('cx', config.centerX)
+        .attr('cy', config.centerY)
         .attr('r', 95)
         .attr('stroke', 'rgba(0, 0, 0, .6)')
         .attr('stroke-width', 3)
         .attr('fill', 'white');
 }
 
-function createValueText(svg, defaults) {
+function createValueText(svg, config) {
     return svg.append('text')
-        .datum({ value: defaults.startValue })
-        .attr('x', defaults.centerX)
+        .datum({ value: config.startValue })
+        .attr('x', config.centerX)
         .attr('y', 170)
         .attr('font-size', 20)
         .attr('text-anchor', 'middle')
-        .text(defaults.startValue);
+        .text(config.startValue);
 }
 
 function coldMarker() {
@@ -170,12 +169,13 @@ function coldMarker() {
         .attr('fill', 'blue');
 }
 
-function createTexts(svg, defaults, scale) {
+function createValueTexts(svg, config) {
     // Background for valuetext
+    const width = 65;
     svg.append('rect')
-        .attr('x', 65)
-        .attr('y', 150)
-        .attr('width', 70)
+        .attr('x', 100 - width / 2)
+        .attr('y', 145)
+        .attr('width', width)
         .attr('height', 25)
         .attr('rx', 3)
         .attr('stroke', 'grey')
@@ -183,9 +183,26 @@ function createTexts(svg, defaults, scale) {
 
     // Type of scale (e.g. temperature, pressure)
     svg.append('text')
-        .attr('x', 100)
-        .attr('y', 143)
+        .attr('x', config.centerX)
+        .attr('y', 140)
         .attr('font-size', 12)
         .attr('text-anchor', 'middle')
-        .text(defaults.scaleType);
+        .text(config.scaleType);
+
+    // Unit
+    svg.append('text')
+        .attr('x', config.centerX)
+        .attr('y', 183)
+        .attr('font-size', 12)
+        .attr('text-anchor', 'middle')
+        .text(config.unit);
+
+    // Value text
+    return svg.append('text')
+        .datum({ value: config.startValue })
+        .attr('x', config.centerX)
+        .attr('y', 165)
+        .attr('font-size', 20)
+        .attr('text-anchor', 'middle')
+        .text(config.startValue);
 }
