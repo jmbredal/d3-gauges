@@ -28,7 +28,12 @@ class WindRoundGauge extends RoundGauge {
         ];
 
         const y = 90;
-        let enter = this.svg.append('g').selectAll('g.windspeed').data(arf).enter().append('g').attr('class', 'windspeed');
+        const enter = this.svg.append('g').selectAll('g.windspeed')
+            .data(arf).enter()
+            .append('g')
+            .attr('class', 'windspeed');
+
+        // Background
         enter.append('rect')
             .attr('x', d => d.x)
             .attr('y', 90)
@@ -38,6 +43,7 @@ class WindRoundGauge extends RoundGauge {
             .attr('stroke', 'grey')
             .attr('fill', 'gainsboro');
 
+        // Unit
         enter.append('text')
             .attr('x', d => d.x + 15)
             .attr('y', y - 5)
@@ -45,6 +51,7 @@ class WindRoundGauge extends RoundGauge {
             .attr('text-anchor', 'middle')
             .text(d => d.unit);
 
+        // Initial values
         enter.append('text')
             .attr('class', 'value')
             .attr('x', d => d.x + 15)
@@ -53,6 +60,7 @@ class WindRoundGauge extends RoundGauge {
             .attr('text-anchor', 'middle')
             .text('12.3');
 
+        // Direction label
         this.svg.append('text')
             .attr('x', 100)
             .attr('y', 125)
@@ -60,6 +68,7 @@ class WindRoundGauge extends RoundGauge {
             .attr('text-anchor', 'middle')
             .text('Direction');
 
+        // Direction background
         this.svg.append('rect')
             .attr('x', 80)
             .attr('y', 130)
@@ -69,6 +78,7 @@ class WindRoundGauge extends RoundGauge {
             .attr('stroke', 'grey')
             .attr('fill', 'gainsboro');
 
+        // Initial direction value
         this.directionValue = this.svg.append('text')
             .attr('x', 100)
             .attr('y', 144)
@@ -76,6 +86,7 @@ class WindRoundGauge extends RoundGauge {
             .attr('text-anchor', 'middle')
             .text('350');
 
+        // The headings
         const myAngleScale = d3.scaleOrdinal()
             .domain(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
             .range(d3.range(0, Math.PI * 2, Math.PI * 2 * (45 / 360)));
@@ -86,6 +97,7 @@ class WindRoundGauge extends RoundGauge {
             .call(myRadialAxis)
             .select('.domain').remove();
 
+        // All the small ticks
         const myAngleScale2 = d3.scaleLinear()
             .domain([0, 360])
             .range([0, 2 * Math.PI]);
@@ -96,6 +108,7 @@ class WindRoundGauge extends RoundGauge {
             .attr('transform', `translate(${this.config.centerX}, ${this.config.centerY})`)
             .call(myRadialAxis2)
 
+        // The arrow
         this.arrow = this.svg.append('polygon')
             .attr('points', '100,15 110,30 90,30')
             .attr('transform', 'rotate(90, 100, 100)')
