@@ -14,20 +14,23 @@
     <div style="display: flex; justify-content: center; align-items: center;">
         <div id="temperature" style="width: 200px"></div>
         <div id="pressure" style="width: 300px"></div>
-        <div id="wind" style="width: 300px"></div>
+        <div id="wind" style="width: 200px"></div>
     </div>
 
     <script src="round-gauge.js"></script>
+    <script src="temperature-round-gauge.js"></script>
+    <script src="wind-round-gauge.js"></script>
     <script>
         // const tempConfig = {
         //     minValue: -30, maxValue: 50, startValue: 0, valueSpacing: 10, tickStep: 2,
         //     scaleType: 'Temperature', unit: '°C'
         // }
-        const temp = new TemperatureRoundGauge('#temperature');
-        temp.demo();
-        const pressure = new PressureRoundGauge('#pressure');
-        pressure.test();
+        // const temp = new TemperatureRoundGauge('#temperature');
+        // temp.demo();
+        // const pressure = new PressureRoundGauge('#pressure');
+        // pressure.test();
         const wind = new WindRoundGauge('#wind');
+        wind.test(300);
         // const pressure = new RoundGauge('#pressure');
         // pressure.demo();
     </script>
