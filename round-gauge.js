@@ -1,15 +1,27 @@
 class RoundGauge {
     constructor(elementId, config={}) {
+        const defaults = {
+            minValue: 900,
+            maxValue: 1100,
+            startValue: 1000,
+            valueSpacing: 20,
+            tickStep: 5,
+            unit: '',
+            scaleType: '',
+        }
+
+        const _config = {...defaults, ...config};
+
         this.config = {
             centerX: 100,
             centerY: 100,
-            minValue: typeof config.minValue != 'undefined' ? config.minValue : 900,
-            maxValue: typeof config.maxValue != 'undefined' ? config.maxValue : 1100,
-            startValue: typeof config.startValue != 'undefined' ? config.startValue : 1000,
-            valueSpacing: typeof config.valueSpacing != 'undefined' ? config.valueSpacing : 20,
-            tickStep: config.tickStep || 5,
-            unit: config.unit || '',
-            scaleType: config.scaleType || '',
+            minValue: _config.minValue,
+            maxValue: _config.maxValue,
+            startValue: _config.startValue,
+            valueSpacing: _config.valueSpacing,
+            tickStep: _config.tickStep,
+            unit: _config.unit,
+            scaleType: _config.scaleType,
             startAngle: -(Math.PI * 2 * (120 / 360)),
             endAngle: Math.PI * 2 * (120 / 360),
             transitionDuration: 1500,
@@ -54,6 +66,7 @@ class RoundGauge {
     }
 }
 
+// Animates value text
 function customTextTween(newValue) {
     return function (d) {
         const interpolate = d3.interpolateRound(d.value, newValue);
@@ -62,6 +75,7 @@ function customTextTween(newValue) {
     }
 }
 
+// Animates hand rotation
 function rotateTween(v) {
     return function (d) {
         const interpolate = d3.interpolate(d.angle, v);
@@ -72,6 +86,7 @@ function rotateTween(v) {
     }
 }
 
+// Creates all ticks and indicators
 function createRadialAxis(svg, config) {
     const myAngleScale = d3.scaleLinear()
         .domain([config.minValue, config.maxValue])
@@ -125,14 +140,15 @@ function createBigHand(svg, config, scale) {
         .attr('transform', `rotate(${scale(config.startValue)}, ${config.centerX}, ${config.centerY})`);
 }
 
+// Add a little button for prettyness
 function createCenterButton(svg, config) {
-    // Add a little button for prettyness
     svg.append('circle')
         .attr('cx', config.centerX)
         .attr('cy', config.centerY)
         .attr('r', 5);
 }
 
+// Creates main background
 function createOutline(svg, config) {
     return svg.append('circle')
         .attr('cx', config.centerX)
@@ -141,16 +157,6 @@ function createOutline(svg, config) {
         .attr('stroke', 'rgba(0, 0, 0, .6)')
         .attr('stroke-width', 3)
         .attr('fill', 'white');
-}
-
-function createValueText(svg, config) {
-    return svg.append('text')
-        .datum({ value: config.startValue })
-        .attr('x', config.centerX)
-        .attr('y', 170)
-        .attr('font-size', 20)
-        .attr('text-anchor', 'middle')
-        .text(config.startValue);
 }
 
 function coldMarker() {
