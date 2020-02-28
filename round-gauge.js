@@ -14,22 +14,28 @@ class RoundGauge {
         transitionDuration: 1500,
     }
 
-    constructor(elementId, config={}) {
+    constructor(elementId, config = {}) {
         this.config = {
             ...this.defaultConfig,
             ...this.getDefaultConfig(),
-            ...config};
+            ...config
+        };
 
-        this.createBaseLayout(elementId);
-        this.createDefaultLayout();
+        this.elementId = elementId;
+        this.createLayout();
     }
 
     getDefaultConfig() {
         return this.defaultConfig;
     }
 
+    createLayout() {
+        this.createBaseLayout();
+        this.createBasicLayout();
+    }
+
     createBaseLayout() {
-        this.svg = d3.select(elementId).append('svg')
+        this.svg = d3.select(this.elementId).append('svg')
             .attr('viewBox', '0 0 200 200')
             .attr('font-family', 'sans-serif');
         this.outline = createOutline(this.svg, this.config);
@@ -91,6 +97,81 @@ class PressureRoundGauge extends RoundGauge {
             unit: 'hPa',
             scaleType: 'Pressure',
         }
+    }
+}
+
+class WindRoundGauge extends RoundGauge {
+    createLayout() {
+        this.svg = d3.select(this.elementId).append('svg')
+            .attr('viewBox', '0 0 200 200')
+            .attr('font-family', 'sans-serif');
+        this.outline = createOutline(this.svg, this.config);
+
+        this.svg.append('text')
+            .attr('x', 100)
+            .attr('y', 60)
+            .attr('font-size', 12)
+            .attr('text-anchor', 'middle')
+            .text('Wind');
+
+        const y = 88;
+        // Background for valuetext
+        [30, 80, 130].forEach((x) => {
+            this.svg.append('rect')
+                .attr('x', x)
+                .attr('y', y)
+                .attr('width', 40)
+                .attr('height', 25)
+                .attr('rx', 3)
+                .attr('stroke', 'grey')
+                .attr('fill', 'gainsboro');
+        });
+
+        this.svg.append('text')
+            .attr('x', 50)
+            .attr('y', y - 5)
+            .attr('font-size', 12)
+            .attr('text-anchor', 'middle')
+            .text('m/s');
+
+        this.svg.append('text')
+            .attr('x', 100)
+            .attr('y', y - 5)
+            .attr('font-size', 12)
+            .attr('text-anchor', 'middle')
+            .text('kt');
+
+        this.svg.append('text')
+            .attr('x', 150)
+            .attr('y', y - 5)
+            .attr('font-size', 12)
+            .attr('text-anchor', 'middle')
+            .text('km/h');
+
+        this.svg.append('text')
+            .attr('x', 100)
+            .attr('y', 140)
+            .attr('font-size', 12)
+            .attr('text-anchor', 'middle')
+            .text('Direction');
+
+        this.svg.append('rect')
+            .attr('x', 80)
+            .attr('y', 145)
+            .attr('width', 40)
+            .attr('height', 25)
+            .attr('rx', 3)
+            .attr('stroke', 'grey')
+            .attr('fill', 'gainsboro');
+
+        const myAngleScale = d3.scaleOrdinal()
+            .domain(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
+            .range(d3.range(0, Math.PI * 2, Math.PI * 2 * (45 / 360)));
+        const myRadius = 85;
+        const myRadialAxis = d3.axisRadialInner(myAngleScale, myRadius);
+        this.svg.append('g')
+            .attr('transform', `translate(${this.config.centerX}, ${this.config.centerY})`)
+            .call(myRadialAxis);
     }
 }
 
