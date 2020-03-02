@@ -5,24 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Weather Trondheim, Værnes - ENVA</title>
 </head>
 
-<body>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
     <header style="position: absolute;">
-        <h3 id="station"></h3>
-        <small id="observed-date"></small>
+        Observed: <small id="observed"></small>
         <br>
-        <small id="observed-time"></small>
+        Fetched: <small id="fetched"></small>
     </header>
 
-    <div style="display: flex; justify-content: center; align-items: center;">
+    <div style="display: flex; justify-content: center; align-items: flex-end;">
         <div id="temperature" style="width: 200px"></div>
         <div id="wind" style="width: 300px"></div>
         <div id="pressure" style="width: 200px"></div>
     </div>
 
-    <script src="main.js"></script>
+    <script src="metar.js"></script>
 </body>
 
 </html>

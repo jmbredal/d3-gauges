@@ -24,15 +24,23 @@ setInterval(() => {
 function fetchData() {
     axios.get(url, config).then((response) => {
         const data = response.data.data[0];
+
         console.log(data);
 
-        document.getElementById('station').innerHTML = data.station.name;
-        document.getElementById('observed-date').innerHTML = new Date(data.observed).toDateString();
-        document.getElementById('observed-time').innerHTML = new Date(data.observed).toTimeString();
+        const today = new Date();
+
+
+        document.title = data.station.name;
+        document.getElementById('observed').innerHTML = formatDate(new Date(data.observed));
+        document.getElementById('fetched').innerHTML = formatDate(new Date());
 
         windGauge.updateDirection(data.wind.degrees);
         windGauge.updateWindSpeed(data.wind.speed_kts);
         pressureGauge.update(data.barometer.hpa);
         tempGauge.update(data.temperature.celsius);
     });
+}
+
+function formatDate(date) {
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
 }
