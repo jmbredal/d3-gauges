@@ -7,38 +7,42 @@ const windGauge = new WindRoundGauge('#wind');
 const tempGauge = new TempRoundGauge('#temperature');
 const pressureGauge = new PressureRoundGauge('#pressure');
 
-const url = 'https://api.checkwx.com/metar/enva/decoded';
 const apiKey = '7ea07a15ec5c5ab9553d15039a';
 const config = {
-    headers: {
-        'X-API-Key': apiKey
-    }
+  headers: {
+    'X-API-Key': apiKey
+  }
 };
 
 const minute = 1000 * 60;
 fetchData();
 setInterval(() => {
     fetchData();
-}, 15 * minute);
+}, 30 * minute);
 
-function fetchData() {
-    axios.get(url, config).then((response) => {
-        const data = response.data.data[0];
+const form = document.getElementById('icao-form');
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const icao = form.querySelector('input').value;
+  fetchData(icao);
+});
 
-        console.log(data);
+function fetchData(icao = 'enva') {
+  const url = `https://api.checkwx.com/metar/${icao}/decoded`;
+  axios.get(url, config).then((response) => {
+    if (response.data.results === 0) {
+      return;
+    }
+    const data = response.data.data[0];
+    document.title = `Weather for ${data.station.name} - ${icao.toUpperCase()}`;
+    document.getElementById('observed').innerHTML = formatDate(new Date(data.observed));
+    document.getElementById('fetched').innerHTML = formatDate(new Date());
 
-        const today = new Date();
-
-
-        document.title = data.station.name;
-        document.getElementById('observed').innerHTML = formatDate(new Date(data.observed));
-        document.getElementById('fetched').innerHTML = formatDate(new Date());
-
-        windGauge.updateDirection(data.wind.degrees);
-        windGauge.updateWindSpeed(data.wind.speed_kts);
-        pressureGauge.update(data.barometer.hpa);
-        tempGauge.update(data.temperature.celsius);
-    });
+    windGauge.updateDirection(data.wind.degrees);
+    windGauge.updateWindSpeed(data.wind.speed_kts);
+    pressureGauge.update(data.barometer.hpa);
+    tempGauge.update(data.temperature.celsius);
+  });
 }
 
 function formatDate(date) {

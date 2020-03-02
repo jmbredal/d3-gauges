@@ -8,18 +8,23 @@
     <title>Weather Trondheim, Værnes - ENVA</title>
 </head>
 
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
-    <header style="position: absolute;">
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; position: relative">
+    <div style="position: absolute;">
         Observed: <small id="observed"></small>
         <br>
         Fetched: <small id="fetched"></small>
-    </header>
+    </div>
 
     <div style="display: flex; justify-content: center; align-items: flex-end;">
         <div id="temperature" style="width: 200px"></div>
         <div id="wind" style="width: 300px"></div>
         <div id="pressure" style="width: 200px"></div>
     </div>
+
+    <form id="icao-form" style="position: absolute; right: 0; top: 0">
+      <input type="text" id="icao-value"><br>
+      <button type="submit" style="width: 100%">Fetch Metar</button>
+    </form>
 
     <script src="metar.js"></script>
 </body>
