@@ -19,7 +19,7 @@ const minute = 1000 * 60;
 fetchData();
 setInterval(() => {
     fetchData();
-}, 5 * minute);
+}, 15 * minute);
 
 function fetchData() {
     axios.get(url, config).then((response) => {
@@ -27,7 +27,8 @@ function fetchData() {
         console.log(data);
 
         document.getElementById('station').innerHTML = data.station.name;
-        document.getElementById('observed').innerHTML = new Date(data.observed).toLocaleString();
+        document.getElementById('observed-date').innerHTML = new Date(data.observed).toDateString();
+        document.getElementById('observed-time').innerHTML = new Date(data.observed).toTimeString();
 
         windGauge.updateDirection(data.wind.degrees);
         windGauge.updateWindSpeed(data.wind.speed_kts);
