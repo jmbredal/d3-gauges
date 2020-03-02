@@ -1,3 +1,9 @@
+Number.prototype.between = function (a, b, inclusive) {
+    var min = Math.min(a, b),
+        max = Math.max(a, b);
+    return inclusive ? this >= min && this <= max : this > min && this < max;
+}
+
 class WindRoundGauge extends RoundGauge {
     createLayout() {
         this.svg = d3.select(this.elementId).append('svg')
@@ -7,12 +13,19 @@ class WindRoundGauge extends RoundGauge {
 
         this.svg.append('text')
             .attr('x', 100)
-            .attr('y', 65)
+            .attr('y', 60)
             .attr('font-size', 12)
             .attr('text-anchor', 'middle')
             .text('Wind');
 
-        const arf = [
+        this.windDescription = this.svg.append('text')
+            .attr('x', 100)
+            .attr('y', 73)
+            .attr('font-size', 10)
+            .attr('text-anchor', 'middle')
+            .text('');
+
+        const windspeeds = [
             {
                 x: 50,
                 unit: 'm/s'
@@ -29,7 +42,7 @@ class WindRoundGauge extends RoundGauge {
 
         const y = 90;
         const enter = this.svg.append('g').selectAll('g.windspeed')
-            .data(arf).enter()
+            .data(windspeeds).enter()
             .append('g')
             .attr('class', 'windspeed');
 
@@ -103,7 +116,7 @@ class WindRoundGauge extends RoundGauge {
             .range([0, 2 * Math.PI]);
         const myRadialAxis2 = d3.axisRadialInner(myAngleScale2, myRadius)
             .ticks(60)
-            .tickFormat(() => {return})
+            .tickFormat(() => { return })
         this.svg.append('g')
             .attr('transform', `translate(${this.config.centerX}, ${this.config.centerY})`)
             .call(myRadialAxis2)
@@ -126,18 +139,36 @@ class WindRoundGauge extends RoundGauge {
         this.arrow.attr('transform', `rotate(${v}, 100, 100)`)
     }
 
-    updateWindSpeed(v) {
-        const ms = Number(v).toFixed(1);
-        const kt = Number(ms * 3600 / 1852).toFixed(1);
-        const kmh = Number(ms * 3600 / 1000).toFixed(0);
+    updateWindSpeed(knots) {
+        // 1 knot = .51444 m/s = 1.852 km/h
+        const ms = Number(knots * 1852 / 3600).toFixed(1);
+        const kt = Number(knots).toFixed(0);
+        const kmh = Number(knots * 1.852).toFixed(0);
         const values = [ms, kt, kmh];
         this.svg.selectAll('g.windspeed').data(values).select('text.value').text(d => d);
+        this.windDescription.text(this.getWindDescription(knots));
     }
 
     test() {
         const direction = parseInt(Math.random() * 360);
-        const windSpeed = parseInt(Math.random() * 33);
+        const windSpeed = parseInt(Math.random() * 70);
         this.update(direction, windSpeed);
+    }
+
+    getWindDescription(knots) {
+        if (knots === 0) return 'Stille vind';
+        if (Number(knots).between(1, 3, true)) return 'Flau vind';
+        if (Number(knots).between(4, 6, true)) return 'Svak vind';
+        if (Number(knots).between(7, 10, true)) return 'Lett bris';
+        if (Number(knots).between(11, 16, true)) return 'Laber bris';
+        if (Number(knots).between(17, 21, true)) return 'Frisk bris';
+        if (Number(knots).between(22, 27, true)) return 'Liten kuling';
+        if (Number(knots).between(28, 33, true)) return 'Stiv kuling';
+        if (Number(knots).between(34, 40, true)) return 'Sterk kuling';
+        if (Number(knots).between(41, 47, true)) return 'Liten storm';
+        if (Number(knots).between(48, 55, true)) return 'Full storm';
+        if (Number(knots).between(56, 63, true)) return 'Sterk storm';
+        if (knots > 63) return 'Orkan';
     }
 
 }
