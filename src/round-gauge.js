@@ -1,20 +1,23 @@
-class RoundGauge {
-    defaultConfig = {
-        minValue: 900,
-        maxValue: 1100,
-        startValue: 1000,
-        valueSpacing: 20,
-        tickStep: 5,
-        unit: '',
-        scaleType: '',
-        centerX: 100,
-        centerY: 100,
-        startAngle: -(Math.PI * 2 * (120 / 360)),
-        endAngle: Math.PI * 2 * (120 / 360),
-        transitionDuration: 1500,
-    }
+import * as d3 from 'd3';
+import { axisRadialInner } from 'd3-radial-axis';
 
+export default class RoundGauge {
     constructor(elementId, config = {}) {
+        this.defaultConfig = {
+            minValue: 900,
+            maxValue: 1100,
+            startValue: 1000,
+            valueSpacing: 20,
+            tickStep: 5,
+            unit: '',
+            scaleType: '',
+            centerX: 100,
+            centerY: 100,
+            startAngle: -(Math.PI * 2 * (120 / 360)),
+            endAngle: Math.PI * 2 * (120 / 360),
+            transitionDuration: 1500,
+        };
+
         this.config = {
             ...this.defaultConfig,
             ...this.getDefaultConfig(),
@@ -38,7 +41,7 @@ class RoundGauge {
         this.svg = d3.select(this.elementId).append('svg')
             .attr('viewBox', '0 0 200 200')
             .attr('font-family', 'sans-serif');
-        this.outline = createOutline(this.svg, this.config);
+        this.outline = this.createOutline(this.svg, this.config);
         this.scale = d3.scaleLinear()
             .range([-120, 120])
             .domain([this.config.minValue, this.config.maxValue]);
@@ -75,14 +78,16 @@ class RoundGauge {
         this.test();
         setInterval(this.test.bind(this), 2500);
     }
-}
 
-class PressureRoundGauge extends RoundGauge {
-    getDefaultConfig() {
-        return {
-            unit: 'hPa',
-            scaleType: 'Pressure',
-        }
+    // Creates main background
+    createOutline() {
+        return this.svg.append('circle')
+            .attr('cx', this.config.centerX)
+            .attr('cy', this.config.centerY)
+            .attr('r', 95)
+            .attr('stroke', 'rgba(0, 0, 0, .6)')
+            .attr('stroke-width', 3)
+            .attr('fill', 'white');
     }
 }
 
@@ -112,7 +117,7 @@ function createRadialAxis(svg, config) {
         .domain([config.minValue, config.maxValue])
         .range([config.startAngle, config.endAngle]);
     const myRadius = 85;
-    const myRadialAxis = d3.axisRadialInner(myAngleScale, myRadius)
+    const myRadialAxis = axisRadialInner(myAngleScale, myRadius)
         .tickPadding(18)
         // .ticks(40)
         .tickValues(d3.range(config.minValue, config.maxValue + config.tickStep, config.tickStep))
@@ -125,7 +130,7 @@ function createRadialAxis(svg, config) {
 
     // Create a second radial axis for displaying the larger ticks
     const tickValues = d3.range(config.minValue, config.maxValue, config.valueSpacing);
-    const mySecondRadialAxis = d3.axisRadialInner(myAngleScale, myRadius)
+    const mySecondRadialAxis = axisRadialInner(myAngleScale, myRadius)
         .tickSize(12)
         .tickValues(tickValues)
         .tickFormat(() => {
@@ -166,33 +171,6 @@ function createCenterButton(svg, config) {
         .attr('cx', config.centerX)
         .attr('cy', config.centerY)
         .attr('r', 5);
-}
-
-// Creates main background
-function createOutline(svg, config) {
-    return svg.append('circle')
-        .attr('cx', config.centerX)
-        .attr('cy', config.centerY)
-        .attr('r', 95)
-        .attr('stroke', 'rgba(0, 0, 0, .6)')
-        .attr('stroke-width', 3)
-        .attr('fill', 'white');
-}
-
-function coldMarker() {
-    const start = this.scale(-30);
-    const end = this.scale(0);
-    this.svg.append('path').attr('d', function () {
-        const arc = d3.arc();
-        return arc({
-            innerRadius: 25,
-            outerRadius: 50,
-            startAngle: 2 * Math.PI * (start / 360),
-            endAngle: 2 * Math.PI * (end / 360)
-        });
-    })
-        .attr('transform', 'translate(100, 100)')
-        .attr('fill', 'blue');
 }
 
 function createValueTexts(svg, config) {

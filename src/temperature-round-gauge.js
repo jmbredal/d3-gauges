@@ -1,4 +1,6 @@
-class TemperatureRoundGauge extends RoundGauge {
+import RoundGauge from './round-gauge';
+
+export default class TemperatureRoundGauge extends RoundGauge {
     getDefaultConfig() {
         return {
             minValue: -30,

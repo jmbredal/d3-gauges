@@ -1,15 +1,21 @@
+import * as d3 from 'd3';
+import { axisRadialInner } from 'd3-radial-axis';
+
+import RoundGauge from './round-gauge';
+
 Number.prototype.between = function (a, b, inclusive) {
     var min = Math.min(a, b),
         max = Math.max(a, b);
     return inclusive ? this >= min && this <= max : this > min && this < max;
 }
 
-class WindRoundGauge extends RoundGauge {
+export default class WindRoundGauge extends RoundGauge {
     createLayout() {
         this.svg = d3.select(this.elementId).append('svg')
             .attr('viewBox', '0 0 200 200')
             .attr('font-family', 'sans-serif');
-        this.outline = createOutline(this.svg, this.config);
+
+        this.outline = this.createOutline(this.svg, this.config);
 
         this.svg.append('text')
             .attr('x', 100)
@@ -104,7 +110,7 @@ class WindRoundGauge extends RoundGauge {
             .domain(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
             .range(d3.range(0, Math.PI * 2, Math.PI * 2 * (45 / 360)));
         const myRadius = 85;
-        const myRadialAxis = d3.axisRadialInner(myAngleScale, myRadius).tickSizeInner(12);
+        const myRadialAxis = axisRadialInner(myAngleScale, myRadius).tickSizeInner(12);
         this.svg.append('g')
             .attr('transform', `translate(${this.config.centerX}, ${this.config.centerY})`)
             .call(myRadialAxis)
@@ -114,7 +120,7 @@ class WindRoundGauge extends RoundGauge {
         const myAngleScale2 = d3.scaleLinear()
             .domain([0, 360])
             .range([0, 2 * Math.PI]);
-        const myRadialAxis2 = d3.axisRadialInner(myAngleScale2, myRadius)
+        const myRadialAxis2 = axisRadialInner(myAngleScale2, myRadius)
             .ticks(60)
             .tickFormat(() => { return })
         this.svg.append('g')
@@ -170,5 +176,4 @@ class WindRoundGauge extends RoundGauge {
         if (Number(knots).between(56, 63, true)) return 'Sterk storm';
         if (knots > 63) return 'Orkan';
     }
-
 }
