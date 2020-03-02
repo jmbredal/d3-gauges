@@ -16,15 +16,20 @@ const config = {
 
 const minute = 1000 * 60;
 fetchData();
-setInterval(() => {
-    fetchData();
+let intervalId = setInterval(() => {
+  fetchData();
 }, 30 * minute);
 
 const form = document.getElementById('icao-form');
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   const icao = form.querySelector('input').value;
+
+  clearInterval(intervalId);
   fetchData(icao);
+  intervalId = setInterval(() => {
+    fetchData(icao);
+  }, 30 * minute);
 });
 
 function fetchData(icao = 'enva') {
