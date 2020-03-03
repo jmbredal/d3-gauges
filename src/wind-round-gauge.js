@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { axisRadialInner } from 'd3-radial-axis';
 
-import RoundGauge, { rotateTween, customTextTween } from './round-gauge';
+import RoundGauge, { rotateTween, customTextTween, textTweenByData } from './round-gauge';
 
 Number.prototype.between = function (a, b, inclusive) {
     var min = Math.min(a, b),
@@ -161,7 +161,11 @@ export default class WindRoundGauge extends RoundGauge {
             return {...d, newValue: values[i] };
         });
 
-        this.svg.selectAll('g.windspeed').data(data).select('text.value').text(d => d.newValue);
+        this.svg.selectAll('g.windspeed').data(data)
+            .select('text.value')
+            .transition()
+            .duration(1500)
+            .textTween(textTweenByData());
         this.windDescription.text(this.getWindDescription(knots));
     }
 

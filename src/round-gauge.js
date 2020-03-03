@@ -101,7 +101,7 @@ export function customTextTween(newValue) {
 }
 
 // Tweens with both from and tovalue as data
-export function customTextTween2() {
+export function textTweenByData() {
   return function (d) {
     const interpolate = d3.interpolateRound(d.value, d.newValue);
     d.value = d.newValue;
