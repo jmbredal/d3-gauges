@@ -92,7 +92,7 @@ export default class RoundGauge {
 }
 
 // Animates value text
-function customTextTween(newValue) {
+export function customTextTween(newValue) {
   return function (d) {
     const interpolate = d3.interpolateRound(d.value, newValue);
     d.value = newValue;
@@ -100,8 +100,17 @@ function customTextTween(newValue) {
   }
 }
 
+// Tweens with both from and tovalue as data
+export function customTextTween2() {
+  return function (d) {
+    const interpolate = d3.interpolateRound(d.value, d.newValue);
+    d.value = d.newValue;
+    return interpolate;
+  }
+}
+
 // Animates hand rotation
-function rotateTween(v) {
+export function rotateTween(v) {
   return function (d) {
     const interpolate = d3.interpolate(d.angle, v);
     return function (t) {

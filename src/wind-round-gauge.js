@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { axisRadialInner } from 'd3-radial-axis';
 
-import RoundGauge from './round-gauge';
+import RoundGauge, { rotateTween, customTextTween } from './round-gauge';
 
 Number.prototype.between = function (a, b, inclusive) {
     var min = Math.min(a, b),
@@ -34,15 +34,18 @@ export default class WindRoundGauge extends RoundGauge {
         const windspeeds = [
             {
                 x: 50,
-                unit: 'm/s'
+                unit: 'm/s',
+                value: 0
             },
             {
                 x: 85,
-                unit: 'kt'
+                unit: 'kt',
+                value: 0
             },
             {
                 x: 120,
-                unit: 'km/h'
+                unit: 'km/h',
+                value: 0
             },
         ];
 
@@ -77,7 +80,7 @@ export default class WindRoundGauge extends RoundGauge {
             .attr('y', y + 14)
             .attr('font-size', 12)
             .attr('text-anchor', 'middle')
-            .text('12.3');
+            .text(d => '');
 
         // Direction label
         this.svg.append('text')
@@ -99,11 +102,12 @@ export default class WindRoundGauge extends RoundGauge {
 
         // Initial direction value
         this.directionValue = this.svg.append('text')
+            .datum({ value: 0 })
             .attr('x', 100)
             .attr('y', 144)
             .attr('font-size', 12)
             .attr('text-anchor', 'middle')
-            .text('350');
+            .text(d => d.value);
 
         // The headings
         const myAngleScale = d3.scaleOrdinal()
@@ -129,8 +133,8 @@ export default class WindRoundGauge extends RoundGauge {
 
         // The arrow
         this.arrow = this.svg.append('polygon')
+            .datum({ angle: 0 })
             .attr('points', '100,15 110,30 90,30')
-            .attr('transform', 'rotate(90, 100, 100)')
             .attr('stroke', 'black')
             .attr('fill', 'red')
     }
@@ -141,8 +145,8 @@ export default class WindRoundGauge extends RoundGauge {
     }
 
     updateDirection(v) {
-        this.directionValue.text(v);
-        this.arrow.attr('transform', `rotate(${v}, 100, 100)`)
+        this.directionValue.transition().duration(1500).textTween(customTextTween(v));
+        this.arrow.transition().duration(1500).attrTween('transform', rotateTween(v));
     }
 
     updateWindSpeed(knots) {
@@ -151,7 +155,13 @@ export default class WindRoundGauge extends RoundGauge {
         const kt = Number(knots).toFixed(0);
         const kmh = Number(knots * 1.852).toFixed(0);
         const values = [ms, kt, kmh];
-        this.svg.selectAll('g.windspeed').data(values).select('text.value').text(d => d);
+
+        // Add new values to the data
+        const data = this.svg.selectAll('g.windspeed').data().map((d, i)=> {
+            return {...d, newValue: values[i] };
+        });
+
+        this.svg.selectAll('g.windspeed').data(data).select('text.value').text(d => d.newValue);
         this.windDescription.text(this.getWindDescription(knots));
     }
 
