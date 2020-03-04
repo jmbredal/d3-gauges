@@ -100,15 +100,6 @@ export function customTextTween(newValue) {
   }
 }
 
-// Tweens with both from and tovalue as data
-export function textTweenByData() {
-  return function (d) {
-    const interpolate = d3.interpolateRound(d.value, d.newValue);
-    d.value = d.newValue;
-    return interpolate;
-  }
-}
-
 // Animates hand rotation
 export function rotateTween(v) {
   return function (d) {
