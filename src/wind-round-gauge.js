@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { axisRadialInner } from 'd3-radial-axis';
 
-import RoundGauge, { rotateTween, customTextTween, textTweenByData } from './round-gauge';
+import RoundGauge, { rotateTween, customTextTween } from './round-gauge';
 
 Number.prototype.between = function (a, b, inclusive) {
     var min = Math.min(a, b),
@@ -39,7 +39,7 @@ export default class WindRoundGauge extends RoundGauge {
             },
             {
                 x: 85,
-                unit: 'kt',
+                unit: 'knots',
                 value: 0
             },
             {
@@ -157,15 +157,15 @@ export default class WindRoundGauge extends RoundGauge {
         const values = [ms, kt, kmh];
 
         // Add new values to the data
-        const data = this.svg.selectAll('g.windspeed').data().map((d, i)=> {
-            return {...d, newValue: values[i] };
+        const data = this.svg.selectAll('g.windspeed').data().map((d, i) => {
+            return { ...d, newValue: values[i] };
         });
 
         this.svg.selectAll('g.windspeed').data(data)
             .select('text.value')
             .transition()
             .duration(1500)
-            .textTween(textTweenByData());
+            .textTween(textTweenWindSpeed());
         this.windDescription.text(this.getWindDescription(knots));
     }
 
@@ -189,5 +189,19 @@ export default class WindRoundGauge extends RoundGauge {
         if (Number(knots).between(48, 55, true)) return 'Full storm';
         if (Number(knots).between(56, 63, true)) return 'Sterk storm';
         if (knots > 63) return 'Orkan';
+    }
+}
+
+function textTweenWindSpeed() {
+    return function (d) {
+        const interpolate = d3.interpolate(d.value, d.newValue);
+        d.value = d.newValue;
+        return function (t) {
+            if (d.unit === 'm/s') {
+                return Number(interpolate(t)).toFixed(1);
+            } else {
+                return Number(interpolate(t)).toFixed(0)
+            }
+        }
     }
 }
