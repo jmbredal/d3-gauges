@@ -17,17 +17,27 @@ export default class WindRoundGauge extends RoundGauge {
 
         this.outline = this.createOutline(this.svg, this.config);
 
-        this.svg.append('text')
-            .attr('x', 100)
-            .attr('y', 60)
-            .attr('font-size', 12)
-            .attr('text-anchor', 'middle')
-            .text('Wind');
+        // this.svg.append('text')
+        //     .attr('x', 100)
+        //     .attr('y', 60)
+        //     .attr('font-size', 12)
+        //     .attr('text-anchor', 'middle')
+        //     .text('Wind');
+
+        const bgWidth = 56
+        this.windDescriptionBackground = this.svg.append('rect')
+            .attr('x', 100 - (bgWidth / 2))
+            .attr('y', 50)
+            .attr('width', bgWidth)
+            .attr('height', 20)
+            .attr('rx', 2)
+            .attr('stroke', 'grey')
+            .attr('fill', 'gainsboro');
 
         this.windDescription = this.svg.append('text')
             .attr('x', 100)
-            .attr('y', 73)
-            .attr('font-size', 10)
+            .attr('y', 63)
+            .attr('font-size', 9)
             .attr('text-anchor', 'middle')
             .text('');
 
@@ -172,7 +182,8 @@ export default class WindRoundGauge extends RoundGauge {
     test() {
         const direction = parseInt(Math.random() * 360);
         const windSpeed = parseInt(Math.random() * 70);
-        this.update(direction, windSpeed);
+        // this.update(direction, windSpeed);
+        this.update(direction, 34);
     }
 
     getWindDescription(knots) {
