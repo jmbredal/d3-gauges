@@ -118,8 +118,6 @@ export default class TemperatureRoundGauge extends RoundGauge {
 // Animates value text
 function textTweenValues() {
   return function (d) {
-    console.log(d);
-
     const interpolate = d3.interpolateRound(d.value, d.newValue);
     d.value = d.newValue;
     return interpolate;
