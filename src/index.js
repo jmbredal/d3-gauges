@@ -3,6 +3,7 @@ import WindRoundGauge from './wind-round-gauge';
 // import TempRoundGauge from './temperature-round-gauge';
 import TempDewRoundGauge from './tempdew-round-gauge';
 import PressureRoundGauge from './pressure-round-gauge';
+import { formatDate } from './formatters.mjs';
 
 const windGauge = new WindRoundGauge('#wind');
 const tempGauge = new TempDewRoundGauge('#temperature');
@@ -58,8 +59,4 @@ function fetchData(icao = 'enva') {
     pressureGauge.update(data.barometer.hpa);
     tempGauge.update(data.temperature.celsius, data.dewpoint.celsius);
   });
-}
-
-function formatDate(date) {
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
 }
