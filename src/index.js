@@ -1,10 +1,11 @@
 import axios from 'axios';
 import WindRoundGauge from './wind-round-gauge';
-import TempRoundGauge from './temperature-round-gauge';
+// import TempRoundGauge from './temperature-round-gauge';
+import TempDewRoundGauge from './tempdew-round-gauge';
 import PressureRoundGauge from './pressure-round-gauge';
 
 const windGauge = new WindRoundGauge('#wind');
-const tempGauge = new TempRoundGauge('#temperature');
+const tempGauge = new TempDewRoundGauge('#temperature');
 const pressureGauge = new PressureRoundGauge('#pressure');
 
 const apiKey = '7ea07a15ec5c5ab9553d15039a';
@@ -14,6 +15,7 @@ const config = {
   }
 };
 
+// tempGauge.test();
 start();
 
 function start() {
@@ -54,7 +56,7 @@ function fetchData(icao = 'enva') {
     windGauge.updateDirection(data.wind.degrees);
     windGauge.updateWindSpeed(data.wind.speed_kts);
     pressureGauge.update(data.barometer.hpa);
-    tempGauge.update(data.temperature.celsius);
+    tempGauge.update(data.temperature.celsius, data.dewpoint.celsius);
   });
 }
 

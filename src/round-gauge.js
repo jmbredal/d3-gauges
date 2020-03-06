@@ -145,7 +145,7 @@ function createRadialAxis(svg, config) {
     .call(mySecondRadialAxis);
 }
 
-function createHand(svg, config, scale) {
+export function createHand(svg, config, scale) {
   return hand = svg.append('line')
     .datum({ angle: scale(config.startValue) })
     .attr('x1', config.centerX)
@@ -156,7 +156,7 @@ function createHand(svg, config, scale) {
     .attr('transform', `rotate(${scale(config.startValue)}, ${config.centerX}, ${config.centerY})`);
 }
 
-function createBigHand(svg, config, scale) {
+export function createBigHand(svg, config, scale) {
   return svg.append('polygon')
     .datum({ angle: scale(config.startValue) })
     .attr('points', '96,120 104,120 100,10')
@@ -166,7 +166,7 @@ function createBigHand(svg, config, scale) {
 }
 
 // Add a little button for prettyness
-function createCenterButton(svg, config) {
+export function createCenterButton(svg, config) {
   svg.append('circle')
     .attr('cx', config.centerX)
     .attr('cy', config.centerY)
