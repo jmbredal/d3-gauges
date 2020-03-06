@@ -23,7 +23,10 @@
 
     <form id="icao-form" style="position: absolute; right: 0; top: 0">
       <input type="text" id="icao-value"><br>
-      <button type="submit" style="width: 100%">Fetch Metar</button>
+      <button type="submit" style="width: 100% ">Fetch Metar</button>
+      <div id="error" style="display: none;">
+        <small style="color: red;">Could not find forecast</small>
+      </div>
     </form>
 
     <script src="metar.js"></script>

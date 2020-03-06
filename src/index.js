@@ -14,28 +14,36 @@ const config = {
   }
 };
 
-const minute = 1000 * 60;
-fetchData();
-let intervalId = setInterval(() => {
+start();
+
+function start() {
+  const minute = 1000 * 60;
   fetchData();
-}, 30 * minute);
-
-const form = document.getElementById('icao-form');
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const icao = form.querySelector('input').value;
-
-  clearInterval(intervalId);
-  fetchData(icao);
-  intervalId = setInterval(() => {
-    fetchData(icao);
+  let intervalId = setInterval(() => {
+    fetchData();
   }, 30 * minute);
-});
+
+  const form = document.getElementById('icao-form');
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    document.getElementById('error').style.display = 'none';
+    const icao = form.querySelector('input').value;
+
+    clearInterval(intervalId);
+    fetchData(icao);
+    intervalId = setInterval(() => {
+      fetchData(icao);
+    }, 30 * minute);
+  });
+}
+
 
 function fetchData(icao = 'enva') {
   const url = `https://api.checkwx.com/metar/${icao}/decoded`;
   axios.get(url, config).then((response) => {
     if (response.data.results === 0) {
+      console.log('No results');
+      document.getElementById('error').style.display = 'block';
       return;
     }
     const data = response.data.data[0];
