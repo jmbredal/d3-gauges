@@ -8,6 +8,7 @@
     "d3-radial-axis": "^1.6.3"
   },
   "devDependencies": {
+    "mocha": "^7.1.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
@@ -15,6 +16,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --open",
+    "test": "mocha",
     "watch": "webpack --watch"
   },
   "author": "",
