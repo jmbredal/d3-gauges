@@ -17,7 +17,8 @@
     "build": "webpack",
     "start": "webpack-dev-server --open",
     "test": "mocha --experimental-modules",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "blapp": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command Copy-Item .\\dist\\* $HOME\\Desktop\\Metar\\resources\\app\\"
   },
   "author": "",
   "license": "ISC"
