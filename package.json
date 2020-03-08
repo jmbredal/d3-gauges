@@ -16,7 +16,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --open",
-    "test": "mocha",
+    "test": "mocha --experimental-modules",
     "watch": "webpack --watch"
   },
   "author": "",
