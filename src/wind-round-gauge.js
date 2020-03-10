@@ -17,24 +17,18 @@ export default class WindRoundGauge extends RoundGauge {
 
         this.outline = this.createOutline(this.svg, this.config);
 
-        // this.svg.append('text')
-        //     .attr('x', 100)
-        //     .attr('y', 60)
-        //     .attr('font-size', 12)
-        //     .attr('text-anchor', 'middle')
-        //     .text('Wind');
-
         const bgWidth = 56
-        this.windDescriptionBackground = this.svg.append('rect')
+
+        const g = this.svg.append('g').attr('class', 'display');
+
+        this.windDescriptionBackground = g.append('rect')
             .attr('x', 100 - (bgWidth / 2))
             .attr('y', 50)
             .attr('width', bgWidth)
             .attr('height', 20)
-            .attr('rx', 2)
-            .attr('stroke', 'grey')
-            .attr('fill', 'gainsboro');
+            .attr('rx', 2);
 
-        this.windDescription = this.svg.append('text')
+        this.windDescription = g.append('text')
             .attr('x', 100)
             .attr('y', 63)
             .attr('font-size', 9)
@@ -60,7 +54,7 @@ export default class WindRoundGauge extends RoundGauge {
         ];
 
         const y = 90;
-        const enter = this.svg.append('g').selectAll('g.windspeed')
+        const enter = g.append('g').selectAll('g.windspeed')
             .data(windspeeds).enter()
             .append('g')
             .attr('class', 'windspeed');
@@ -71,9 +65,7 @@ export default class WindRoundGauge extends RoundGauge {
             .attr('y', 90)
             .attr('width', 30)
             .attr('height', 20)
-            .attr('rx', 3)
-            .attr('stroke', 'grey')
-            .attr('fill', 'gainsboro');
+            .attr('rx', 3);
 
         // Unit
         enter.append('text')
@@ -93,7 +85,7 @@ export default class WindRoundGauge extends RoundGauge {
             .text(d => '');
 
         // Direction label
-        this.svg.append('text')
+        g.append('text')
             .attr('x', 100)
             .attr('y', 125)
             .attr('font-size', 10)
@@ -101,20 +93,18 @@ export default class WindRoundGauge extends RoundGauge {
             .text('Direction');
 
         // Direction background
-        this.svg.append('rect')
+        g.append('rect')
             .attr('x', 80)
             .attr('y', 130)
             .attr('width', 40)
             .attr('height', 20)
-            .attr('rx', 3)
-            .attr('stroke', 'grey')
-            .attr('fill', 'gainsboro');
+            .attr('rx', 3);
 
         // Initial direction value
-        this.directionValue = this.svg.append('text')
+        this.directionValue = g.append('text')
             .datum({ value: 0 })
             .attr('x', 100)
-            .attr('y', 144)
+            .attr('y', 145)
             .attr('font-size', 12)
             .attr('text-anchor', 'middle')
             .text(d => d.value);

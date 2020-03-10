@@ -42,7 +42,7 @@ export default class TemperatureRoundGauge extends RoundGauge {
       .attr('y1', centerY)
       .attr('x2', 100)
       .attr('y2', 10)
-      .attr('stroke', 'black')
+      .attr('stroke', 'rgba(255, 255, 255, .87)')
       .attr('transform', `rotate(${this.scale(dewTemp)}, ${centerX}, ${centerY})`);
   }
 
@@ -82,10 +82,8 @@ export default class TemperatureRoundGauge extends RoundGauge {
       .attr('x', (d) => d.xPosition)
       .attr('y', 145)
       .attr('width', width)
-      .attr('height', 25)
-      .attr('rx', 3)
-      .attr('stroke', 'grey')
-      .attr('fill', 'gainsboro');
+      .attr('height', 23)
+      .attr('rx', 3);
 
     // Type of scale (e.g. temperature, pressure)
     displayContainers.append('text')
@@ -99,7 +97,7 @@ export default class TemperatureRoundGauge extends RoundGauge {
     displayContainers.append('text')
       .attr('x', (d) => d.xPosition + width / 2)
       .attr('y', 183)
-      .attr('font-size', 10)
+      .attr('font-size', 12)
       .attr('text-anchor', 'middle')
       .text(d => d.unit);
 
@@ -107,8 +105,8 @@ export default class TemperatureRoundGauge extends RoundGauge {
     displayContainers.append('text')
       .attr('class', 'displayValue')
       .attr('x', d => d.xPosition + width / 2)
-      .attr('y', 164)
-      .attr('font-size', 18)
+      .attr('y', 162)
+      .attr('font-size', 16)
       .attr('text-anchor', 'middle')
       .text(d => d.value);
   }

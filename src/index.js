@@ -17,6 +17,8 @@ const config = {
 };
 
 // tempGauge.test();
+// windGauge.test();
+// pressureGauge.test();
 start();
 
 function start() {

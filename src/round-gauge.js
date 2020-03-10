@@ -39,8 +39,7 @@ export default class RoundGauge {
 
   createBaseLayout() {
     this.svg = d3.select(this.elementId).append('svg')
-      .attr('viewBox', '0 0 200 200')
-      .attr('font-family', 'sans-serif');
+      .attr('viewBox', '0 0 200 200');
     this.outline = this.createOutline(this.svg, this.config);
     this.scale = d3.scaleLinear()
       .range([-120, 120])
@@ -82,12 +81,11 @@ export default class RoundGauge {
   // Creates main background
   createOutline() {
     return this.svg.append('circle')
+      .attr('class', 'gauge-background')
       .attr('cx', this.config.centerX)
       .attr('cy', this.config.centerY)
-      .attr('r', 95)
-      .attr('stroke', 'rgba(0, 0, 0, .6)')
-      .attr('stroke-width', 3)
-      .attr('fill', 'white');
+      .attr('stroke', 'black')
+      .attr('r', 95);
   }
 }
 
@@ -160,7 +158,6 @@ export function createBigHand(svg, config, scale) {
   return svg.append('polygon')
     .datum({ angle: scale(config.startValue) })
     .attr('points', '96,120 104,120 100,10')
-    .attr('stroke', 'black')
     .attr('fill', 'red')
     .attr('transform', `rotate(${scale(config.startValue)}, ${config.centerX}, ${config.centerY})`);
 }
@@ -170,23 +167,23 @@ export function createCenterButton(svg, config) {
   svg.append('circle')
     .attr('cx', config.centerX)
     .attr('cy', config.centerY)
-    .attr('r', 5);
+    .attr('r', 6);
 }
 
 function createValueTexts(svg, config) {
+
+  const display = svg.append('g').attr('class', 'display');
   // Background for valuetext
   const width = 65;
-  svg.append('rect')
+  display.append('rect')
     .attr('x', 100 - width / 2)
     .attr('y', 145)
     .attr('width', width)
-    .attr('height', 25)
-    .attr('rx', 3)
-    .attr('stroke', 'grey')
-    .attr('fill', 'gainsboro');
+    .attr('height', 23)
+    .attr('rx', 3);
 
   // Type of scale (e.g. temperature, pressure)
-  svg.append('text')
+  display.append('text')
     .attr('x', config.centerX)
     .attr('y', 140)
     .attr('font-size', 12)
@@ -194,7 +191,7 @@ function createValueTexts(svg, config) {
     .text(config.scaleType);
 
   // Unit
-  svg.append('text')
+  display.append('text')
     .attr('x', config.centerX)
     .attr('y', 183)
     .attr('font-size', 12)
@@ -202,11 +199,11 @@ function createValueTexts(svg, config) {
     .text(config.unit);
 
   // Value text
-  return svg.append('text')
+  return display.append('text')
     .datum({ value: config.startValue })
     .attr('x', config.centerX)
-    .attr('y', 165)
-    .attr('font-size', 20)
+    .attr('y', 162)
+    .attr('font-size', 16)
     .attr('text-anchor', 'middle')
     .text(config.startValue);
 }
