@@ -2,68 +2,83 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Weather Trondheim, Værnes - ENVA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Weather Trondheim, Værnes - ENVA</title>
 
-    <!-- <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet"> -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet"> -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 
-    <style>
-      body {
-        background-color: #121212;
-        /* font-family: 'Roboto Condensed', sans-serif; */
-        font-family: 'Open Sans', sans-serif;
-        color: rgba(255,255,255,.87);
-      }
-      .gauge-background {
-        fill: #212121;
-      }
+  <style>
+    body {
+      background-color: #121212;
+      /* font-family: 'Roboto Condensed', sans-serif; */
+      font-family: 'Open Sans', sans-serif;
+      color: rgba(255, 255, 255, .87);
+    }
 
-      text {
-        fill: rgba(255,255,255,.87);
-      }
+    .gauge-background {
+      fill: #424242;
+      filter: url(#inset-shadow);
+    }
 
-      .tick text {
-        fill: white;
-      }
-      .tick line {
-        stroke: white;
-      }
+    text {
+      fill: rgba(255, 255, 255, .87);
+    }
 
-      .domain {
-        stroke: rgba(255,255,255,.87);
-      }
+    .tick text {
+      fill: white;
+    }
 
-      .display rect {
-        fill: #424242;
-      }
-    </style>
+    .tick line {
+      stroke: white;
+    }
+
+    .domain {
+      stroke: rgba(255, 255, 255, .87);
+    }
+
+    .display rect {
+      fill: #757575;
+      filter: url(#inset-shadow);
+    }
+  </style>
 </head>
 
 <body>
-    <div style="position: absolute;">
-        Observed: <small id="observed"></small>
-        <br>
-        Fetched: <small id="fetched"></small>
+  <svg>
+    <defs>
+      <filter id="inset-shadow">
+        <feFlood flood-color="black" />
+        <feComposite operator="out" in2="SourceGraphic" />
+        <feGaussianBlur stdDeviation="2" />
+        <feComposite operator="atop" in2="SourceGraphic" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div style="position: absolute;">
+    Observed: <small id="observed"></small>
+    <br>
+    Fetched: <small id="fetched"></small>
+  </div>
+
+  <div style="display: flex; justify-content: center; align-items: flex-end;">
+    <div id="temperature" style="width: 200px"></div>
+    <div id="wind" style="width: 300px"></div>
+    <div id="pressure" style="width: 200px"></div>
+  </div>
+
+  <form id="icao-form" style="position: absolute; right: 5px; top: 5px">
+    <input type="text" id="icao-value"><br>
+    <button type="submit" style="width: 100% ">Fetch Metar</button>
+    <div id="error" style="display: none;">
+      <small style="color: red;">Could not find forecast</small>
     </div>
+  </form>
 
-    <div style="display: flex; justify-content: center; align-items: flex-end;">
-        <div id="temperature" style="width: 200px"></div>
-        <div id="wind" style="width: 300px"></div>
-        <div id="pressure" style="width: 200px"></div>
-    </div>
-
-    <form id="icao-form" style="position: absolute; right: 5px; top: 5px">
-      <input type="text" id="icao-value"><br>
-      <button type="submit" style="width: 100% ">Fetch Metar</button>
-      <div id="error" style="display: none;">
-        <small style="color: red;">Could not find forecast</small>
-      </div>
-    </form>
-
-    <script src="metar.js"></script>
+  <script src="metar.js"></script>
 </body>
 
 </html>
