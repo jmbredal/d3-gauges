@@ -96,7 +96,7 @@ export default class TemperatureRoundGauge extends RoundGauge {
     // Unit
     displayContainers.append('text')
       .attr('x', (d) => d.xPosition + width / 2)
-      .attr('y', 183)
+      .attr('y', 181)
       .attr('font-size', 12)
       .attr('text-anchor', 'middle')
       .text(d => d.unit);

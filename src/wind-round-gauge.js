@@ -12,8 +12,7 @@ Number.prototype.between = function (a, b, inclusive) {
 export default class WindRoundGauge extends RoundGauge {
     createLayout() {
         this.svg = d3.select(this.elementId).append('svg')
-            .attr('viewBox', '0 0 200 200')
-            .attr('font-family', 'sans-serif');
+            .attr('viewBox', '0 0 200 200');
 
         this.outline = this.createOutline(this.svg, this.config);
 
@@ -70,7 +69,7 @@ export default class WindRoundGauge extends RoundGauge {
         // Unit
         enter.append('text')
             .attr('x', d => d.x + 15)
-            .attr('y', y - 5)
+            .attr('y', y - 4)
             .attr('font-size', 10)
             .attr('text-anchor', 'middle')
             .text(d => d.unit);
@@ -87,7 +86,7 @@ export default class WindRoundGauge extends RoundGauge {
         // Direction label
         g.append('text')
             .attr('x', 100)
-            .attr('y', 125)
+            .attr('y', 126)
             .attr('font-size', 10)
             .attr('text-anchor', 'middle')
             .text('Direction');
@@ -116,6 +115,7 @@ export default class WindRoundGauge extends RoundGauge {
         const myRadius = 85;
         const myRadialAxis = axisRadialInner(myAngleScale, myRadius).tickSizeInner(12);
         this.svg.append('g')
+            .attr('class', 'radial-axis')
             .attr('transform', `translate(${this.config.centerX}, ${this.config.centerY})`)
             .call(myRadialAxis)
             .select('.domain').remove();
@@ -128,6 +128,7 @@ export default class WindRoundGauge extends RoundGauge {
             .ticks(60)
             .tickFormat(() => { return })
         this.svg.append('g')
+            .attr('class', 'radial-axis')
             .attr('transform', `translate(${this.config.centerX}, ${this.config.centerY})`)
             .call(myRadialAxis2)
 

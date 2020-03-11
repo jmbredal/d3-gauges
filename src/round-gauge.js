@@ -136,6 +136,7 @@ function createRadialAxis(svg, config) {
     });
 
   svg.append('g')
+    .attr('class', 'radial-axis')
     .attr('transform', `translate(${config.centerX}, ${config.centerY})`)
     .call(myRadialAxis);
   svg.append('g')
@@ -193,7 +194,7 @@ function createValueTexts(svg, config) {
   // Unit
   display.append('text')
     .attr('x', config.centerX)
-    .attr('y', 183)
+    .attr('y', 182)
     .attr('font-size', 12)
     .attr('text-anchor', 'middle')
     .text(config.unit);
