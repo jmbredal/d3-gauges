@@ -104,7 +104,7 @@ export default class WindRoundGauge extends RoundGauge {
         this.directionValue = g.append('text')
             .datum({ value: 0 })
             .attr('x', 100)
-            .attr('y', 145)
+            .attr('y', 144)
             .attr('font-size', 12)
             .attr('text-anchor', 'middle')
             .text(d => d.value);
