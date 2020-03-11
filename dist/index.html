@@ -47,17 +47,6 @@
 </head>
 
 <body>
-  <svg>
-    <defs>
-      <filter id="inset-shadow">
-        <feFlood flood-color="black" />
-        <feComposite operator="out" in2="SourceGraphic" />
-        <feGaussianBlur stdDeviation="2" />
-        <feComposite operator="atop" in2="SourceGraphic" />
-      </filter>
-    </defs>
-  </svg>
-
   <div style="position: absolute;">
     Observed: <small id="observed"></small>
     <br>
@@ -79,6 +68,18 @@
   </form>
 
   <script src="metar.js"></script>
+
+  <svg style="display :none">
+    <defs>
+      <filter id="inset-shadow">
+        <feFlood flood-color="black" />
+        <feComposite operator="out" in2="SourceGraphic" />
+        <feGaussianBlur stdDeviation="2" />
+        <feComposite operator="atop" in2="SourceGraphic" />
+      </filter>
+    </defs>
+  </svg>
+
 </body>
 
 </html>
