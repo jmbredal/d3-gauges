@@ -46,6 +46,19 @@ function start() {
 
 function fetchData(icao = 'enva') {
   const url = `https://api.checkwx.com/metar/${icao}/decoded`;
+  icao = icao.toLowerCase();
+
+  const cache = localStorage.get(icao);
+  if (cache != null) {
+    // Check date
+    const now = new Date();
+    const fetched = new Date(cache.fetched);
+    const passedHalfHour = now - fetched > 30 * minute;
+    if (passedHalfHour) {
+
+    }
+  }
+
   axios.get(url, config).then((response) => {
     if (response.data.results === 0) {
       console.log('No results');

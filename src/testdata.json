@@ -1,0 +1,79 @@
+{
+  "wind": {
+    "degrees": 0,
+    "speed_kts": 1,
+    "speed_mph": 1,
+    "speed_mps": 1
+  },
+  "temperature": {
+    "celsius": 1,
+    "fahrenheit": 34
+  },
+  "dewpoint": {
+    "celsius": 0,
+    "fahrenheit": 32
+  },
+  "humidity": {
+    "percent": 93
+  },
+  "barometer": {
+    "hg": 28.88,
+    "hpa": 978,
+    "kpa": 97.79,
+    "mb": 977.92
+  },
+  "visibility": {
+    "miles": "2.49",
+    "miles_float": 2.49,
+    "meters": "4,000",
+    "meters_float": 4000
+  },
+  "ceiling": {
+    "code": "OVX",
+    "text": "Vertical visibility",
+    "feet_agl": 900,
+    "meters_agl": 274.32
+  },
+  "elevation": {
+    "feet": 55.77,
+    "meters": 17
+  },
+  "location": {
+    "coordinates": [
+      10.924,
+      63.457802
+    ],
+    "type": "Point"
+  },
+  "icao": "ENVA",
+  "observed": "2020-03-12T14:50:00.000Z",
+  "fetched": "2020-03-12T14:50:00.000Z",
+  "raw_text": "ENVA 121450Z VRB01KT 4000 SHRASN VV009 01/00 Q0978 TEMPO 1500 SNRA RMK WIND 670FT VRB02KT",
+  "station": {
+    "name": "Trondheim , Værnes"
+  },
+  "visiblity": {
+    "vertical": {
+      "feet": 900
+    }
+  },
+  "clouds": [
+    {
+      "code": "OVX",
+      "text": "Vertical visibility",
+      "base_feet_agl": 900,
+      "base_meters_agl": 274.32
+    }
+  ],
+  "conditions": [
+    {
+      "code": "RA",
+      "text": "Rain"
+    },
+    {
+      "code": "SN",
+      "text": "Snow"
+    }
+  ],
+  "flight_category": "LIFR"
+}
