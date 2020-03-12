@@ -19,6 +19,27 @@ const config = {
   }
 };
 
+const clouds = [{ code: "CAVOK", text: "Clear skies" }];
+
+const conditions = [
+  { prefix: "-", code: "RA", text: "Light Rain" },
+  { prefix: "-", code: "GS", text: "Light Small hail" }
+];
+
+const weatherIconMap = {
+  'RA': '05d',
+}
+
+const sources = [];
+
+if (clouds.some(c => c.code === 'CAVOK')) {
+  sources.push('01d');
+}
+
+sources = conditions.map(c => {
+
+});
+
 document.getElementById('weather-icon').src = sunny;
 
 tempGauge.test();
