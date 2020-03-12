@@ -3,6 +3,9 @@ import WindRoundGauge from './wind-round-gauge';
 // import TempRoundGauge from './temperature-round-gauge';
 import TempDewRoundGauge from './tempdew-round-gauge';
 import PressureRoundGauge from './pressure-round-gauge';
+
+import sunny from '../assets/icons/weather/28m.svg';
+
 import { formatDate } from './formatters.mjs';
 
 const windGauge = new WindRoundGauge('#wind');
@@ -16,10 +19,12 @@ const config = {
   }
 };
 
-// tempGauge.test();
-// windGauge.test();
-// pressureGauge.test();
-start();
+document.getElementById('weather-icon').src = sunny;
+
+tempGauge.test();
+windGauge.test();
+pressureGauge.test();
+// start();
 
 function start() {
   const minute = 1000 * 60;
