@@ -5,7 +5,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "d3": "^5.15.0",
-    "d3-radial-axis": "^1.6.3"
+    "d3-radial-axis": "^1.6.3",
+    "svg-url-loader": "^4.0.0"
   },
   "devDependencies": {
     "mocha": "^7.1.0",

@@ -7,6 +7,21 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   devServer: {
-      contentBase: './dist'
+    contentBase: './dist'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'svg-url-loader',
+            options: {
+              limit: 10000,
+            },
+          },
+        ],
+      }
+    ]
   }
 };
