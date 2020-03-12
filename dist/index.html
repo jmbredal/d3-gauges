@@ -49,8 +49,6 @@
 </head>
 
 <body>
-  <img id="weather-icon" src="" height="50" />
-
   <svg style="width: 0; height: 0;">
     <defs>
       <filter id="inset-shadow">
@@ -63,9 +61,22 @@
   </svg>
 
   <div style="position: absolute; top: 5px;">
-    Observed: <small id="observed"></small>
-    <br>
-    Fetched: <small id="fetched"></small>
+    <section>
+      <p>Observed: <small id="observed"></small></p>
+      <p>Fetched: <small id="fetched"></small></p>
+    </section>
+
+    <section id="cloud-cover">
+      <h4>Cloud cover</h4>
+      <ul id="cloud-cover-list"></ul>
+    </section>
+
+    <section id="conditions">
+      <h4>Conditions</h4>
+      <ul id="condition-list"></ul>
+    </section>
+
+    <img id="weather-icon" src="" height="50" />
   </div>
 
   <div style="display: flex; justify-content: center; align-items: flex-end;">
