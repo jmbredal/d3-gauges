@@ -8,12 +8,18 @@
   <title></title>
 
   <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-
+  <link href="normalize.css" rel="stylesheet">
+  <link href="skeleton.css" rel="stylesheet">
   <style>
     body {
       background-color: #121212;
       font-family: 'Roboto', sans-serif;
       color: rgba(255, 255, 255, .87);
+    }
+
+    input {
+      color: black;
+      margin-bottom: .5rem;
     }
 
     .radial-axis {
@@ -49,6 +55,7 @@
     .information-display {
       display: flex;
       justify-content: space-between;
+      padding: 0 1rem;
     }
   </style>
 </head>
@@ -72,8 +79,8 @@
   </div>
 
   <form id="icao-form" style="position: absolute; right: 5px; top: 5px">
-    <input type="text" id="icao-value"><br>
-    <button type="submit" style="width: 100% ">Fetch Metar</button>
+    <input type="text" id="icao-value" placeholder="icao"><br>
+    <button type="submit" class="button-primary" style="width: 100%">Fetch Metar</button>
     <div id="error" style="display: none;">
       <small style="color: red;">Could not find forecast</small>
     </div>
@@ -81,7 +88,7 @@
 
   <div class="information-display">
     <section>
-      <h4>Observations</h4>
+      <h5>Observations</h5>
       <ul>
         <li>Observed: <small id="observed"></small></li>
         <li>Fetched: <small id="fetched"></small></li>
@@ -90,7 +97,7 @@
     </section>
 
     <section id="ceiling">
-      <h4>Ceiling</h4>
+      <h5>Ceiling</h5>
       <ul>
         <li><span id='ceiling-text'></span></li>
         <li><span id='ceiling-agl'></span></li>
@@ -98,12 +105,12 @@
     </section>
 
     <section id="cloud-cover">
-      <h4>Cloud cover</h4>
+      <h5>Cloud cover</h5>
       <ul id="cloud-cover-list"></ul>
     </section>
 
     <section id="conditions">
-      <h4>Conditions</h4>
+      <h5>Conditions</h5>
       <ul id="condition-list"></ul>
     </section>
   </div>
