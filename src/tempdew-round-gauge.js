@@ -25,7 +25,24 @@ export default class TemperatureRoundGauge extends RoundGauge {
     };
   }
 
+  createColdArc() {
+    this.svg.append('g').attr('class', 'cold-marker')
+    .attr('transform', 'translate(100, 100)')
+    .append('path')
+    .attr('fill', '#03A9F4')
+    .attr('d', () => {
+      var arc = d3.arc();
+      return arc({
+        innerRadius: 73,
+        outerRadius: 79,
+        startAngle: (this.scale(-30) / 360) * Math.PI * 2,
+        endAngle: (this.scale(0) / 360) * Math.PI * 2
+      }); // "M0,
+    });
+  }
+
   createBasicLayout() {
+    this.createColdArc();
     this.createTextDisplays();
     this.config.startValue = this.config.data[0].value;
     this.dewHand = this.createHand();
