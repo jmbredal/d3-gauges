@@ -156,7 +156,7 @@ function updateWeatherIcon(data) {
   const isOvercast = data.clouds.some(c => c.code === 'OVC' || c.code === 'OVX');
 
   // Set sunny as the default
-  let iconKey = '01d';
+  let iconKey = '';
   if (isRain && isSnow) {
     iconKey = '12';
   } else {
@@ -165,11 +165,14 @@ function updateWeatherIcon(data) {
   }
 
   if (!iconKey) {
-    if (isLightCloudCover) { iconKey = '02' }
-    if (isMediumCloudCover) { iconKey = '03' }
+    if (isLightCloudCover) { iconKey = '02d' }
+    if (isMediumCloudCover) { iconKey = '03d' }
     if (isOvercast) { iconKey = '04' }
   }
 
+  if (!iconKey) {
+    iconKey = '01d';
+  }
   const icon = require(`../assets/icons/weather/${iconKey}.svg`);
   document.getElementById('weather-icon').src = icon;
 }
