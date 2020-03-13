@@ -109,8 +109,14 @@ function displayData(data) {
   document.title = `Weather for ${data.station.name} - ${data.icao}`;
   document.getElementById('observed').innerHTML = formatDate(new Date(data.observed));
   document.getElementById('fetched').innerHTML = formatDate(new Date());
-  document.getElementById('ceiling-text').innerHTML = data.ceiling.text;
-  document.getElementById('ceiling-agl').innerHTML = data.ceiling.meters_agl;
+
+  if (data.ceiling) {
+    document.getElementById('ceiling').style.display = 'block';
+    document.getElementById('ceiling-text').innerHTML = data.ceiling.text;
+    document.getElementById('ceiling-agl').innerHTML = data.ceiling.meters_agl;
+  } else {
+    document.getElementById('ceiling').style.display = 'none';
+  }
 
   updateConditions(data.conditions);
   updateCloudCover(data.clouds);
@@ -151,7 +157,7 @@ function updateWeatherIcon(data) {
   // Hmm this is going to be messy
   const isRain = data.conditions.some(c => c.code === 'RA');
   const isSnow = data.conditions.some(c => c.code === 'SN');
-  const isLightCloudCover = data.clouds.some(c => c.code === 'SCT');
+  const isLightCloudCover = data.clouds.some(c => c.code === 'SCT' || c.code === 'FEW');
   const isMediumCloudCover = data.clouds.some(c => c.code === 'BKN');
   const isOvercast = data.clouds.some(c => c.code === 'OVC' || c.code === 'OVX');
 
