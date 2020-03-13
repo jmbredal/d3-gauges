@@ -110,14 +110,7 @@ function displayData(data) {
   document.getElementById('observed').innerHTML = formatDate(new Date(data.observed));
   document.getElementById('fetched').innerHTML = formatDate(new Date());
 
-  if (data.ceiling) {
-    document.getElementById('ceiling').style.display = 'block';
-    document.getElementById('ceiling-text').innerHTML = data.ceiling.text;
-    document.getElementById('ceiling-agl').innerHTML = data.ceiling.meters_agl;
-  } else {
-    document.getElementById('ceiling').style.display = 'none';
-  }
-
+  updateCeiling(data.ceiling);
   updateConditions(data.conditions);
   updateCloudCover(data.clouds);
   updateWeatherIcon(data);
@@ -126,6 +119,15 @@ function displayData(data) {
   windGauge.updateWindSpeed(data.wind.speed_kts);
   pressureGauge.update(data.barometer.hpa);
   tempGauge.update(data.temperature.celsius, data.dewpoint.celsius);
+}
+
+function updateCeiling(ceiling) {
+  if (ceiling) {
+    document.getElementById('ceiling').style.display = 'block';
+    document.getElementById('ceiling-text').innerHTML = `${ceiling.text} (${ceiling.feet_agl})`;
+  } else {
+    document.getElementById('ceiling').style.display = 'none';
+  }
 }
 
 function updateCloudCover(clouds) {
@@ -137,7 +139,7 @@ function updateCloudCover(clouds) {
   }
   clouds.forEach(c => {
     const listItem = document.createElement('li');
-    listItem.innerHTML = c.text;
+    listItem.innerHTML = `${c.text} (${c.base_feet_agl})`;
     cloudCoverList.appendChild(listItem);
   });
 }
