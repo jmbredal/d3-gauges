@@ -35,7 +35,9 @@ function initialize() {
 
 function getIcao() {
   // todo: fetch from localstorage
-  return 'enva';
+  const defaultStation = 'enva';
+  let lastStation = localStorage.getItem('last-station');
+  return lastStation || defaultStation;
 }
 
 function startTimer(icao) {
@@ -64,6 +66,7 @@ async function fetchDataForStation(icao) {
   }
 
   if (data != null) {
+    setLastStation(icao);
     displayData(data);
   }
 }
@@ -72,6 +75,10 @@ function storeData(data, icao) {
   data.fetched = new Date().getTime();
   localStorage.setItem(icao, JSON.stringify(data));
   return data;
+}
+
+function setLastStation(icao) {
+  localStorage.setItem('last-station', icao);
 }
 
 async function fetchDataFromApi(icao) {
