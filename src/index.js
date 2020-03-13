@@ -6,73 +6,104 @@ import PressureRoundGauge from './pressure-round-gauge';
 
 import { formatDate } from './formatters.mjs';
 
+const minute = 1000 * 60;
+let timerId = 0;
+
 const windGauge = new WindRoundGauge('#wind');
 const tempGauge = new TempDewRoundGauge('#temperature');
 const pressureGauge = new PressureRoundGauge('#pressure');
 
-const apiKey = '7ea07a15ec5c5ab9553d15039a';
-const config = {
-  headers: {
-    'X-API-Key': apiKey
-  }
-};
-
 // tempGauge.test();
 // windGauge.test();
 // pressureGauge.test();
-start();
+initialize();
 // displayData(getTestData());
 
-function start() {
-  const minute = 1000 * 60;
-  fetchData();
-  let intervalId = setInterval(() => {
-    fetchData();
-  }, 30 * minute);
+function initialize() {
+  const icao = getIcao();
+  fetchDataForStation(icao);
+  startTimer(icao);
 
   const form = document.getElementById('icao-form');
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    document.getElementById('error').style.display = 'none';
     const icao = form.querySelector('input').value;
-
-    clearInterval(intervalId);
-    fetchData(icao);
-    intervalId = setInterval(() => {
-      fetchData(icao);
-    }, 30 * minute);
+    fetchDataForStation(icao);
+    startTimer(icao);
   });
 }
 
-function fetchData(icao = 'enva') {
-  const url = `https://api.checkwx.com/metar/${icao}/decoded`;
+function getIcao() {
+  // todo: fetch from localstorage
+  return 'enva';
+}
+
+function startTimer(icao) {
+  clearInterval(timerId);
+  timerId = setInterval(() => {
+    fetchDataForStation(icao);
+  }, 30 * minute);
+}
+
+async function fetchDataForStation(icao) {
   icao = icao.toLowerCase();
 
-  const cache = localStorage.get(icao);
-  if (cache != null) {
-    // Check date
+  let data = JSON.parse(localStorage.getItem(icao));
+  if (data !== null && data.station) {
+    // Check stale data
     const now = new Date();
-    const fetched = new Date(cache.fetched);
+    const fetched = new Date(data.fetched);
     const passedHalfHour = now - fetched > 30 * minute;
     if (passedHalfHour) {
-
+      data = await fetchDataFromApi(icao);
+      storeData(data, icao);
     }
+  } else {
+    data = await fetchDataFromApi(icao);
+    storeData(data, icao);
   }
 
-  axios.get(url, config).then((response) => {
-    if (response.data.results === 0) {
-      console.log('No results');
-      document.getElementById('error').style.display = 'block';
-      return;
+  if (data != null) {
+    displayData(data);
+  }
+}
+
+function storeData(data, icao) {
+  data.fetched = new Date().getTime();
+  localStorage.setItem(icao, JSON.stringify(data));
+  return data;
+}
+
+async function fetchDataFromApi(icao) {
+  console.log('Fetching fresh data');
+
+  const url = `https://api.checkwx.com/metar/${icao}/decoded`;
+  const apiKey = '7ea07a15ec5c5ab9553d15039a';
+  const config = {
+    headers: {
+      'X-API-Key': apiKey
     }
-    displayData(response.data.data[0]);
-  });
+  };
+  const response = await axios.get(url, config);
+  console.log(response);
+
+  document.getElementById('error').style.display = 'none';
+  if (response.data.results === 0) {
+    console.log('No results');
+    document.getElementById('error').style.display = 'block';
+    return;
+  }
+  return response.data.data[0];
 }
 
 function displayData(data) {
+  console.log(data);
+
   document.title = `Weather for ${data.station.name} - ${data.icao}`;
   document.getElementById('observed').innerHTML = formatDate(new Date(data.observed));
   document.getElementById('fetched').innerHTML = formatDate(new Date());
+  document.getElementById('ceiling-text').innerHTML = data.ceiling.text;
+  document.getElementById('ceiling-agl').innerHTML = data.ceiling.meters_agl;
 
   updateConditions(data.conditions);
   updateCloudCover(data.clouds);
@@ -86,6 +117,7 @@ function displayData(data) {
 
 function updateCloudCover(clouds) {
   const cloudCoverList = document.getElementById('cloud-cover-list');
+  cloudCoverList.innerHTML = '';
   if (clouds.length <= 0) {
     cloudCoverList.style.display = 'none';
     return;
@@ -99,10 +131,8 @@ function updateCloudCover(clouds) {
 
 function updateConditions(conditions) {
   const conditionsList = document.getElementById('condition-list');
-  if (conditions.length <= 0) {
-    conditionsList.style.display = 'none';
-    return;
-  }
+  conditionsList.innerHTML = '';
+  conditionsList.style.display = conditions.length > 0 ? 'block' : 'none';
   conditions.forEach(c => {
     const listItem = document.createElement('li');
     listItem.innerHTML = c.text;
@@ -114,20 +144,29 @@ function updateWeatherIcon(data) {
   // Hmm this is going to be messy
   const isRain = data.conditions.some(c => c.code === 'RA');
   const isSnow = data.conditions.some(c => c.code === 'SN');
-
-  let icon = null;
-  if (isRain && isSnow) {
-    icon = require('../assets/icons/weather/12.svg');
-  } else {
-    if (isRain) { icon = require('../assets/icons/weather/09.svg'); }
-    if (isSnow) { icon = require('../assets/icons/weather/13.svg'); }
-  }
+  const isLightCloudCover = data.clouds.some(c => c.code === 'SCT');
+  const isMediumCloudCover = data.clouds.some(c => c.code === 'BKN');
+  const isOvercast = data.clouds.some(c => c.code === 'OVC' || c.code === 'OVX');
 
   // Set sunny as the default
-  if (!icon) { require('../assets/icons/weather/01d.svg'); }
+  let iconKey = '01d';
+  if (isRain && isSnow) {
+    iconKey = '12';
+  } else {
+    if (isRain) { iconKey = '09' }
+    if (isSnow) { iconKey = '13' }
+  }
+
+  if (!iconKey) {
+    if (isLightCloudCover) { iconKey = '02' }
+    if (isMediumCloudCover) { iconKey = '03' }
+    if (isOvercast) { iconKey = '04' }
+  }
+
+  const icon = require(`../assets/icons/weather/${iconKey}.svg`);
   document.getElementById('weather-icon').src = icon;
 }
 
 function getTestData() {
-  return {"wind":{"degrees":0,"speed_kts":1,"speed_mph":1,"speed_mps":1},"temperature":{"celsius":1,"fahrenheit":34},"dewpoint":{"celsius":0,"fahrenheit":32},"humidity":{"percent":93},"barometer":{"hg":28.88,"hpa":978,"kpa":97.79,"mb":977.92},"visibility":{"miles":"2.49","miles_float":2.49,"meters":"4,000","meters_float":4000},"ceiling":{"code":"OVX","text":"Vertical visibility","feet_agl":900,"meters_agl":274.32},"elevation":{"feet":55.77,"meters":17},"location":{"coordinates":[10.924,63.457802],"type":"Point"},"icao":"ENVA","observed":"2020-03-12T14:50:00.000Z","raw_text":"ENVA 121450Z VRB01KT 4000 SHRASN VV009 01/00 Q0978 TEMPO 1500 SNRA RMK WIND 670FT VRB02KT","station":{"name":"Trondheim , Værnes"},"visiblity":{"vertical":{"feet":900}},"clouds":[{"code":"OVX","text":"Vertical visibility","base_feet_agl":900,"base_meters_agl":274.32}],"conditions":[{"code":"RA","text":"Rain"},{"code":"SN","text":"Snow"}],"flight_category":"LIFR"};
+  return { "wind": { "degrees": 0, "speed_kts": 1, "speed_mph": 1, "speed_mps": 1 }, "temperature": { "celsius": 1, "fahrenheit": 34 }, "dewpoint": { "celsius": 0, "fahrenheit": 32 }, "humidity": { "percent": 93 }, "barometer": { "hg": 28.88, "hpa": 978, "kpa": 97.79, "mb": 977.92 }, "visibility": { "miles": "2.49", "miles_float": 2.49, "meters": "4,000", "meters_float": 4000 }, "ceiling": { "code": "OVX", "text": "Vertical visibility", "feet_agl": 900, "meters_agl": 274.32 }, "elevation": { "feet": 55.77, "meters": 17 }, "location": { "coordinates": [10.924, 63.457802], "type": "Point" }, "icao": "ENVA", "observed": "2020-03-12T14:50:00.000Z", "raw_text": "ENVA 121450Z VRB01KT 4000 SHRASN VV009 01/00 Q0978 TEMPO 1500 SNRA RMK WIND 670FT VRB02KT", "station": { "name": "Trondheim , Værnes" }, "visiblity": { "vertical": { "feet": 900 } }, "clouds": [{ "code": "OVX", "text": "Vertical visibility", "base_feet_agl": 900, "base_meters_agl": 274.32 }], "conditions": [{ "code": "RA", "text": "Rain" }, { "code": "SN", "text": "Snow" }], "flight_category": "LIFR" };
 }
