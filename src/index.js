@@ -9,6 +9,7 @@ import { formatDate } from './formatters.mjs';
 const minute = 1000 * 60;
 let timerId = 0;
 
+const norwegianAirports = ['ENAL', 'ENAN', 'ENAS', 'ENAT', 'ENBJ', 'ENBL', 'ENBM', 'ENBN', 'ENBO', 'ENBR', 'ENBS', 'ENBV', 'ENCN', 'ENDI', 'ENDR', 'ENDU', 'ENEG', 'ENEN', 'ENEV', 'ENFB', 'ENFG', 'ENFL', 'ENFR', 'ENGA', 'ENGC', 'ENGK', 'ENGM', 'ENHA', 'ENHD', 'ENHE', 'ENHF', 'ENHK', 'ENHS', 'ENHV', 'ENJA', 'ENJB', 'ENKB', 'ENKJ', 'ENKL', 'ENKR', 'ENLI', 'ENLK', 'ENMH', 'ENML', 'ENMS', 'ENNA', 'ENNK', 'ENNM', 'ENNO', 'ENOA', 'ENOL', 'ENOP', 'ENOV', 'ENRA', 'ENRI', 'ENRK', 'ENRM', 'ENRO', 'ENRS', 'ENRV', 'ENRY', 'ENSA', 'ENSB', 'ENSD', 'ENSG', 'ENSH', 'ENSK', 'ENSM', 'ENSN', 'ENSO', 'ENSR', 'ENSS', 'ENST', 'ENSU', 'ENTC', 'ENTO', 'ENUL', 'ENVA', 'ENVD', 'ENVR', 'ENZV'];
 const windGauge = new WindRoundGauge('#wind');
 const tempGauge = new TempDewRoundGauge('#temperature');
 const pressureGauge = new PressureRoundGauge('#pressure');
@@ -17,7 +18,19 @@ const pressureGauge = new PressureRoundGauge('#pressure');
 // windGauge.test();
 // pressureGauge.test();
 initialize();
-// displayData(getTestData());
+// supaTest(norwegianAirports);
+
+function supaTest(norwegianAirports) {
+  const station = norwegianAirports.shift();
+  fetchDataForStation(station);
+  if (norwegianAirports.length > 0) {
+    setTimeout(() => {
+      supaTest(norwegianAirports);
+    }, 3000);
+  } else {
+    console.log('Done fetching all airports');
+  }
+}
 
 function initialize() {
   const icao = getIcao();
@@ -72,6 +85,7 @@ async function fetchDataForStation(icao) {
 }
 
 function storeData(data, icao) {
+  if (!data) return;
   data.fetched = new Date().getTime();
   localStorage.setItem(icao, JSON.stringify(data));
   return data;
@@ -96,7 +110,7 @@ async function fetchDataFromApi(icao) {
 
   document.getElementById('error').style.display = 'none';
   if (response.data.results === 0) {
-    console.log('No results');
+    console.log('No results', icao);
     document.getElementById('error').style.display = 'block';
     return;
   }
@@ -107,8 +121,10 @@ function displayData(data) {
   console.log(data);
 
   document.title = `Weather for ${data.station.name} - ${data.icao}`;
+  document.getElementById('station-name').innerHTML = data.station.name;
   document.getElementById('observed').innerHTML = formatDate(new Date(data.observed));
   document.getElementById('fetched').innerHTML = formatDate(new Date());
+  document.getElementById('metar-raw').innerHTML = data.raw_text;
 
   updateCeiling(data.ceiling);
   updateConditions(data.conditions);
@@ -124,7 +140,7 @@ function displayData(data) {
 function updateCeiling(ceiling) {
   if (ceiling) {
     document.getElementById('ceiling').style.display = 'block';
-    document.getElementById('ceiling-text').innerHTML = `${ceiling.text} (${ceiling.feet_agl})`;
+    document.getElementById('ceiling-text').innerHTML = `${ceiling.text} (${ceiling.feet_agl} ft)`;
   } else {
     document.getElementById('ceiling').style.display = 'none';
   }
@@ -139,7 +155,13 @@ function updateCloudCover(clouds) {
   }
   clouds.forEach(c => {
     const listItem = document.createElement('li');
-    listItem.innerHTML = `${c.text} (${c.base_feet_agl})`;
+    let text;
+    if (c.base_feet_agl) {
+      text = `${c.text} (${c.base_feet_agl} ft)`;
+    } else {
+      text = c.text;
+    }
+    listItem.innerHTML = text;
     cloudCoverList.appendChild(listItem);
   });
 }
