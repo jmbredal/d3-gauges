@@ -7,23 +7,14 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title></title>
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata|Roboto:400,700&display=swap" rel="stylesheet">
   <link href="normalize.css" rel="stylesheet">
-  <link href="skeleton.css" rel="stylesheet">
   <style>
     body {
       background-color: #121212;
       font-family: 'Roboto', sans-serif;
+      font-size: 14px;
       color: rgba(255, 255, 255, .87);
-    }
-
-    input {
-      color: black;
-      margin-bottom: .5rem;
-    }
-
-    .radial-axis {
-      /* font-family: 'Roboto', sans-serif; */
     }
 
     .gauge-background {
@@ -52,16 +43,76 @@
       filter: url(#inset-shadow);
     }
 
+    /* html elements */
+    #top-left {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+    }
+
+    #station-name {
+      font-size: 24px;
+      margin-left: .5rem;
+      z-index: -1;
+    }
+
     .information-display {
       display: flex;
-      justify-content: space-between;
       padding: 0 1rem;
     }
+
+    .information-display > section + section {
+      margin-left: 1rem;
+    }
+
+    #metar-raw {
+      background-color: #424242;
+      border-radius: .2rem;
+      display: block;
+      font-family: 'Inconsolata', monospace;
+      filter: url(#inset-shadow);
+      padding: .2rem;
+    }
+
+    #icao-form {
+      display: flex;
+      flex-direction: column;
+      width: 200px;
+    }
+
+    #icao-form input {
+      color: black;
+      padding: .4rem;
+    }
+
+    #icao-form button {
+      background-color: #424242;
+      border: 0;
+      padding: .5rem;
+      transition: .3s;
+    }
+
+    #icao-form button:hover {
+      background-color: #616161;
+    }
+
+    section > h4 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
+    section > ul {
+      list-style-position: inside;
+      padding-left: 0;
+    }
+
   </style>
 </head>
 
 <body>
-  <svg style="width: 0; height: 0;">
+  <svg style="position: absolute">
     <defs>
       <filter id="inset-shadow">
         <feFlood flood-color="black" />
@@ -72,44 +123,53 @@
     </defs>
   </svg>
 
+  <section id="top-left">
+    <img id="weather-icon" src="" height="50" />
+    <span id="station-name"></span>
+  </section>
+
+  <section id="observations" style="position: absolute; top: 5px; right: 5px; text-align: right;">
+    Observed: <span id="observed"></span>
+    <br>
+    Fetched: <span id="fetched"></span>
+  </section>
+
   <div style="display: flex; justify-content: center; align-items: flex-end;">
     <div id="temperature" style="width: 250px"></div>
     <div id="wind" style="width: 300px"></div>
     <div id="pressure" style="width: 250px"></div>
   </div>
 
-  <form id="icao-form" style="position: absolute; right: 5px; top: 5px">
-    <input type="text" id="icao-value" placeholder="icao"><br>
-    <button type="submit" class="button-primary" style="width: 100%">Fetch Metar</button>
-    <div id="error" style="display: none;">
-      <small style="color: red;">Could not find forecast</small>
-    </div>
-  </form>
+  <div style="margin: 1rem;">
+    <code id="metar-raw"></code>
+  </div>
 
   <div class="information-display">
     <section>
-      <h5>Observations</h5>
-      <ul>
-        <li>Observed: <span id="observed"></span></li>
-        <li>Fetched: <span id="fetched"></span></li>
-      </ul>
-      <img id="weather-icon" src="" height="50" />
+      <form id="icao-form">
+        <label for="icao-value">ICAO (4 characters)</label>
+        <input type="text" id="icao-value" placeholder="icao"><br>
+        <button type="submit">Fetch Metar</button>
+        <div id="error" style="display: none;">
+          <span style="color: red;">Could not find forecast</span>
+        </div>
+      </form>
     </section>
 
     <section id="ceiling">
-      <h5>Ceiling</h5>
+      <h4>Ceiling</h4>
       <ul>
         <li><span id='ceiling-text'></span></li>
       </ul>
     </section>
 
     <section id="cloud-cover">
-      <h5>Cloud cover</h5>
+      <h4>Cloud cover</h4>
       <ul id="cloud-cover-list"></ul>
     </section>
 
     <section id="conditions">
-      <h5>Conditions</h5>
+      <h4>Conditions</h4>
       <ul id="condition-list"></ul>
     </section>
   </div>
