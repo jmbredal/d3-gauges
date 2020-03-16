@@ -99,12 +99,12 @@ export function customTextTween(newValue) {
 }
 
 // Animates hand rotation
-export function rotateTween(v) {
+export function rotateTween(v, x=100, y=100) {
   return function (d) {
     const interpolate = d3.interpolate(d.angle, v);
     return function (t) {
       d.angle = interpolate(t);
-      return `rotate(${interpolate(t)}, 100, 100)`;
+      return `rotate(${interpolate(t)}, ${x}, ${y})`;
     }
   }
 }

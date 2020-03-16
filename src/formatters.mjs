@@ -7,7 +7,7 @@ export function formatDate(date) {
   return `${day}.${month}.${year}, ${hours}:${minutes}`;
 }
 
-function padLeft(thing, padding='00') {
+export function padLeft(thing, padding='00') {
   const padded = padding + thing.toString();
   const length = padded.length;
   return padded.slice(length - 2, length);

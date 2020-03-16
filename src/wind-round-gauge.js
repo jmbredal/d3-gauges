@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { axisRadialInner } from 'd3-radial-axis';
 
 import RoundGauge, { rotateTween, customTextTween } from './round-gauge';
+import { padLeft } from './formatters';
 
 Number.prototype.between = function (a, b, inclusive) {
     var min = Math.min(a, b),
@@ -138,6 +139,16 @@ export default class WindRoundGauge extends RoundGauge {
             .attr('points', '100,15 110,30 90,30')
             .attr('stroke', 'black')
             .attr('fill', 'red')
+
+        // Wind barb
+        this.windBarb = this.svg.append('image')
+          .datum({angle: -90})
+          .attr('x', 130)
+          .attr('y', 115)
+          .attr('width', 20)
+          .attr('height', 20)
+          .attr('transform', 'rotate(-90, 140, 125)')
+          .attr('href', require('../assets/icons/windspeed/Symbol_wind_speed_03.svg'));
     }
 
     update(direction, windSpeed) {
@@ -147,6 +158,7 @@ export default class WindRoundGauge extends RoundGauge {
 
     updateDirection(v) {
         this.directionValue.transition().duration(1500).textTween(customTextTween(v));
+        this.windBarb.transition().duration(1500).attrTween('transform', rotateTween(v - 90, 140, 125));
         this.arrow.transition().duration(1500).attrTween('transform', rotateTween(v));
     }
 
@@ -168,6 +180,7 @@ export default class WindRoundGauge extends RoundGauge {
             .duration(1500)
             .textTween(textTweenWindSpeed());
         this.windDescription.text(this.getWindDescription(knots));
+        this.windBarb.attr('href', this.getWindSpeedSymbol(knots));
     }
 
     test() {
@@ -182,8 +195,8 @@ export default class WindRoundGauge extends RoundGauge {
         if (Number(knots).between(1, 3, true)) return 'Flau vind';
         if (Number(knots).between(4, 6, true)) return 'Svak vind';
         if (Number(knots).between(7, 10, true)) return 'Lett bris';
-        if (Number(knots).between(11, 16, true)) return 'Laber bris';
-        if (Number(knots).between(17, 21, true)) return 'Frisk bris';
+        if (Number(knots).between(11, 15, true)) return 'Laber bris';
+        if (Number(knots).between(16, 21, true)) return 'Frisk bris';
         if (Number(knots).between(22, 27, true)) return 'Liten kuling';
         if (Number(knots).between(28, 33, true)) return 'Stiv kuling';
         if (Number(knots).between(34, 40, true)) return 'Sterk kuling';
@@ -191,6 +204,11 @@ export default class WindRoundGauge extends RoundGauge {
         if (Number(knots).between(48, 55, true)) return 'Full storm';
         if (Number(knots).between(56, 63, true)) return 'Sterk storm';
         if (knots > 63) return 'Orkan';
+    }
+
+    getWindSpeedSymbol(knots) {
+      const postfix = padLeft(Math.ceil(knots / 5));
+      return require(`../assets/icons/windspeed/Symbol_wind_speed_${postfix}.svg`);
     }
 }
 
