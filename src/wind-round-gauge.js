@@ -134,8 +134,14 @@ export default class WindRoundGauge extends RoundGauge {
             .call(myRadialAxis2)
 
         // The arrow
-        this.arrow = this.svg.append('polygon')
+        this.fromArrow = this.svg.append('polygon')
             .datum({ angle: 0 })
+            .attr('points', '100,30 110,15 90,15')
+            .attr('stroke', 'black')
+            .attr('fill', 'red')
+
+        this.toArrow = this.svg.append('polygon')
+            .datum({ angle: 180 })
             .attr('points', '100,15 110,30 90,30')
             .attr('stroke', 'black')
             .attr('fill', 'red')
@@ -156,10 +162,12 @@ export default class WindRoundGauge extends RoundGauge {
         this.updateWindSpeed(windSpeed);
     }
 
-    updateDirection(v) {
-        this.directionValue.transition().duration(1500).textTween(customTextTween(v));
-        this.windBarb.transition().duration(1500).attrTween('transform', rotateTween(v - 90, 140, 125));
-        this.arrow.transition().duration(1500).attrTween('transform', rotateTween(v));
+    updateDirection(from) {
+        const to = from + 180;
+        this.directionValue.transition().duration(1500).textTween(customTextTween(from));
+        this.windBarb.transition().duration(1500).attrTween('transform', rotateTween(to - 90, 140, 125));
+        this.fromArrow.transition().duration(1500).attrTween('transform', rotateTween(from));
+        this.toArrow.transition().duration(1500).attrTween('transform', rotateTween(to));
     }
 
     updateWindSpeed(knots) {
