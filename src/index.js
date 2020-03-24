@@ -133,14 +133,14 @@ function displayData(data) {
 
   windGauge.updateDirection(data.wind.degrees);
   windGauge.updateWindSpeed(data.wind.speed_kts);
-  pressureGauge.update(data.barometer.hpa);
+  pressureGauge.update(data.barometer.kpa);
   tempGauge.update(data.temperature.celsius, data.dewpoint.celsius);
 }
 
 function updateCeiling(ceiling) {
   if (ceiling) {
     document.getElementById('ceiling').style.display = 'block';
-    document.getElementById('ceiling-text').innerHTML = `${ceiling.text} (${ceiling.feet_agl} ft)`;
+    document.getElementById('ceiling-text').innerHTML = `${ceiling.text} (${ceiling.base_feet_agl} ft)`;
   } else {
     document.getElementById('ceiling').style.display = 'none';
   }
