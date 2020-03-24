@@ -29,7 +29,8 @@ export default class TemperatureRoundGauge extends RoundGauge {
     this.svg.append('g').attr('class', 'cold-marker')
     .attr('transform', 'translate(100, 100)')
     .append('path')
-    .attr('fill', '#03A9F4')
+    .attr('fill', '#4FC3F7')
+    .attr('opacity', '.5')
     .attr('d', () => {
       var arc = d3.arc();
       return arc({
