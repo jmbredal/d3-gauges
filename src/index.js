@@ -133,7 +133,7 @@ function displayData(data) {
 
   windGauge.updateDirection(data.wind.degrees);
   windGauge.updateWindSpeed(data.wind.speed_kts);
-  pressureGauge.update(data.barometer.kpa);
+  pressureGauge.update(data.barometer.hpa);
   tempGauge.update(data.temperature.celsius, data.dewpoint.celsius);
 }
 
